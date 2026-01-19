@@ -1,8 +1,16 @@
-import { ChangeDetectionStrategy, Component, inject, resource, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  resource,
+  signal,
+} from '@angular/core';
 import { planEmojies } from './plan-emojies';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { Plan } from '../../core';
+import { Plan, Telegram } from '../../core';
 import { friendsMock } from './friends';
 
 @Component({
@@ -12,9 +20,10 @@ import { friendsMock } from './friends';
   styleUrl: './create-plan.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreatePlan {
+export class CreatePlan implements OnInit, OnDestroy {
   private planService = inject(Plan);
   private fb = inject(NonNullableFormBuilder);
+  private telegram = inject(Telegram);
   // Mocks
   protected emojiMock = planEmojies;
   protected friendsMock = friendsMock;
@@ -24,6 +33,9 @@ export class CreatePlan {
 
   // signals
   protected selectEmoji = signal<string>(this.emojiMock[0].emoji);
+  ngOnInit(): void {
+    this.telegram.showBackButton('/start');
+  }
 
   constructor() {
     this.planF = this.fb.group({
@@ -41,5 +53,9 @@ export class CreatePlan {
   // other functions
   protected setEmoji(emoji: string) {
     this.selectEmoji.set(emoji);
+  }
+
+  ngOnDestroy(): void {
+    this.telegram.hiddeBackButton('/start');
   }
 }
