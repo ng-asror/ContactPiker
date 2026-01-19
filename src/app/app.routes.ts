@@ -8,8 +8,13 @@ export const routes: Routes = [
     data: { menu: true },
   },
   {
-    path: 'plan',
+    path: 'plans',
     loadComponent: () => import('./features').then((p) => p.Plan),
+    data: { menu: true },
+  },
+  {
+    path: 'create-plan',
+    loadComponent: () => import('./features').then((p) => p.CreatePlan),
     data: { menu: false },
   },
   {
