@@ -1,0 +1,30 @@
+<router-outlet />
+<div class="fixed z-10 inset-x-0 bottom-0 transition-transform duration-300 ease-in-out"
+	[class.translate-y-0]="show_menu()" [class.translate-y-full]="!show_menu()">
+	<menu class="flex items-stratch w-full h-[50px] bg-white border-t-1 border-gray-200">
+		<li
+			class="flex-1 flex flex-col items-center justify-center gap-y-[4px] h-full text-center text-gray-500 font-normal text-xs leading-[100%]"
+			routerLink="/plans" routerLinkActive="text-gray-900 font-semibold">
+			<img src="imgs/kalendar.png" alt="kalendar.png" fetchpriority="high" loading="eager" width="21" height="21" />
+			Планы
+		</li>
+		<li
+			class="flex-1 flex flex-col items-center justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
+			routerLink="/friends" routerLinkActive="text-gray-900 font-semibold">
+			<img src="imgs/friends.png" alt="friends.png" fetchpriority="high" loading="eager" width="24" height="24" />
+			Друзья
+		</li>
+		<li
+			class="flex-1 flex flex-col items-center justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
+			routerLink="/calendar" routerLinkActive="text-gray-900 font-semibold">
+			<img src="imgs/bell.png" alt="bell.png" fetchpriority="high" loading="eager" width="21" height="21" />
+			Уведомления
+		</li>
+		<li
+			class="flex-1 flex flex-col items-center justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
+			routerLink="/profile" routerLinkActive="text-gray-900 font-semibold">
+			<img src="imgs/profile.png" alt="profile.png" fetchpriority="high" loading="eager" width="21" height="21" />
+			Профиль
+		</li>
+	</menu>
+</div>
