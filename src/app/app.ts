@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
+  OnInit,
   signal,
 } from '@angular/core';
 import {
@@ -13,7 +14,8 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
+import { Account, Telegram } from './core';
 
 @Component({
   selector: 'app-root',
@@ -21,10 +23,12 @@ import { filter } from 'rxjs';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private cds = inject(ChangeDetectorRef);
+  private telegram = inject(Telegram);
+  private accountService = inject(Account);
 
   // SIGNALS
   show_menu = signal<boolean>(true);
@@ -34,7 +38,23 @@ export class App {
       const active = this.getChild(this.activatedRoute);
       const menubar = active.snapshot.data['menu'];
       this.show_menu.set(menubar);
-      console.log(this.show_menu());
+    });
+  }
+  async ngOnInit(): Promise<void> {
+    this.telegram.init('#fee140');
+    const token: string | null = await this.telegram.getCloudStorage('token');
+    console.log(!!token, token);
+
+    if (!!token) {
+      this.login();
+    }
+  }
+
+  private async login(): Promise<void> {
+    const initData: string = this.telegram.tg.initData;
+    if (!initData) return;
+    await firstValueFrom(this.accountService.login({ initData: initData })).then((res) => {
+      this.telegram.setCloudItem('token', res);
     });
   }
 
