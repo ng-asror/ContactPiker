@@ -22,11 +22,11 @@ import { Account, Telegram } from './core';
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  private cds = inject(ChangeDetectorRef);
   private telegram = inject(Telegram);
   private accountService = inject(Account);
 
@@ -43,9 +43,7 @@ export class App implements OnInit {
   async ngOnInit(): Promise<void> {
     this.telegram.init('#fee140');
     const token: string | null = await this.telegram.getCloudStorage('token');
-    console.log(!!token, token);
-
-    if (!!token) {
+    if (token !== 'false') {
       this.login();
     }
   }
