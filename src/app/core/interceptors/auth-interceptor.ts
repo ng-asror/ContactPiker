@@ -9,7 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.url.includes('accounts/auth/telegram')) {
     return next(req);
   }
-  return from(telegram.getCloudStorage('token')).pipe(
+  return from(telegram.getCloudStorage('access_token')).pipe(
     switchMap((token) => {
       const newReq = token
         ? req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) })
