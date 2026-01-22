@@ -3,7 +3,7 @@
 		<h1 class="text-2xl font-bold text-gray-900 capitalize">
 			{{ currentMonth }} {{ currentYear }}
 		</h1>
-		<button
+		<button (click)="selectDay.set(currentDay)"
 			class="cursor-pointer bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[36px] w-fit px-[20px] text-[13px] font-bold leading-[100%] text-white">
 			Сегодня
 		</button>
@@ -19,12 +19,54 @@
 			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Вс</li>
 		</ul>
 		<ul class="grid grid-cols-7 gap-[10px] mt-[20px]">
-			@for (day of [].constructor(currentMonthDays); let i = $index; track i) {
-			<li
-				class="bg-gray-100 cursor-pointer aspect-square rounded-xl content-center text-center text-base font-semibold leading-[100%]">
+			@if(!plans.isLoading()) {
+			@for (day of plans.value(); let i = $index; track i) {
+			<li (click)="selectDay.set(i + 1)"
+				class="bg-gray-100 cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%] hover:bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)] hover:text-white"
+				[class.bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)]]="selectDay() === i + 1"
+				[class.text-white]="selectDay() === i + 1">
 				{{ i + 1 }}
+				@if(day.plans.length) {
+				<span class="translate-y-[4px] w-[6px] h-[6px] bg-[#F5576C] block mx-auto rounded-full"></span>
+				}
 			</li>
 			}
+			}@else {
+			@for(day of days; track day) {
+			<li
+				class="bg-gray-100 animate-pulse cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%] hover:bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)] hover:text-white">
+			</li>
+			}
+			}
 		</ul>
+	</div>
+	<div>
+		<b class="text-gray-900 text-lg font-bold leading-[100%]">Ближайшие планы</b>
+		<div class="space-y-[12px]">
+			<a href="#!"
+				class="flex mt-[5px] items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]">
+				<p class="text-2xl leading-[100%]">🍕</p>
+				<div>
+					<b class="text-base font-bold text-gray-900 leading-[120%]">Пицца с Аней</b>
+					<div class="mt-[15px]">
+						<p class="text-sm text-gray-400 leading-[100%] text-gray-500">Завтра в 19:00 • Додо Пицца</p>
+						<ul class="-space-x-2 mt-[5px]">
+							<li
+								class="inline-block h-[30px] w-[30px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
+								Я</li>
+							<li
+								class="inline-block h-[30px] w-[30px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
+								А</li>
+							<li
+								class="inline-block h-[30px] w-[30px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
+								М</li>
+							<li
+								class="inline-block h-[30px] w-[30px] rounded-full content-center text-center ml-2 text-gray-500 text-xs font-bold">
+								+2</li>
+						</ul>
+					</div>
+				</div>
+			</a>
+		</div>
 	</div>
 </div>
