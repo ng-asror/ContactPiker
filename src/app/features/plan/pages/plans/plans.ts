@@ -28,7 +28,7 @@ export class Plans implements OnInit, OnDestroy {
 	private planService = inject(PlanService);
 
 	// Variables
-	protected days = Array.from({ length: 31 }, (_, i) => i + 1);
+	protected days = Array.from({ length: 31 });
 	protected currentMonth: string = new Date().toLocaleString('ru-RU', { month: 'long' });
 	protected currentYear: number = new Date().getFullYear();
 	protected currentMonthIndex: number = new Date().getMonth() + 1;
@@ -61,7 +61,7 @@ export class Plans implements OnInit, OnDestroy {
 		const resoult: DayPlans<T>[] = Array.from(
 			{ length: this.currentMonthDays },
 			(_, i) => ({
-				day: i,
+				day: i + 1,
 				plans: []
 			})
 		)
@@ -76,6 +76,7 @@ export class Plans implements OnInit, OnDestroy {
 				resoult[dayIndex].plans!.push(plan)
 			}
 		}
+
 		return resoult
 	}
 }
