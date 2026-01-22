@@ -10,8 +10,8 @@ import {
 import { planEmojies } from './plan-emojies';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { Plan, Telegram } from '../../core';
-import { friendsMock } from './friends';
+import { Plan } from '../../services';
+import { Telegram } from '../../../../core';
 
 @Component({
   selector: 'app-create-plan',
@@ -26,7 +26,6 @@ export class CreatePlan implements OnInit, OnDestroy {
   private telegram = inject(Telegram);
   // Mocks
   protected emojiMock = planEmojies;
-  protected friendsMock = friendsMock;
 
   // Variables
   protected planF: FormGroup;
@@ -47,7 +46,7 @@ export class CreatePlan implements OnInit, OnDestroy {
 
   // resources
   protected friends = resource({
-    loader: () => firstValueFrom(this.planService.friends()).then((res) => res),
+    loader: () => firstValueFrom(this.planService.friends()).then((res) => res.friends),
   });
 
   // other functions

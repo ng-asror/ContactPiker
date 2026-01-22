@@ -2,8 +2,9 @@
 	<div>
 		<h5 class="text-sm font-bold leading-[100%] text-gray-900">Выбери эмодзи</h5>
 		<ul class="grid grid-cols-6 gap-[10px] mt-[5px]">
-			@for (item of emojiMock; track $index) {
-			<li class="rounded-xl bg-[#F8F9FA] aspect-square content-center cursor-pointer group"
+			@for (item of emojiMock; track item.id) {
+			<li
+				class="rounded-xl bg-[#F8F9FA] aspect-square content-center cursor-pointer group hover:bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
 				[class.bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]]="
             selectEmoji() === item.emoji
           " (click)="setEmoji(item.emoji)">
@@ -31,7 +32,7 @@
 			placeholder="Додо Пицца, Тверская 10" />
 	</div>
 	<ul class="flex flex-wrap gap-[10px]">
-		@for (friend of friendsMock; track $index) {
+		@for (friend of friends.value(); track friend.id) {
 		<li
 			class="w-fit h-[36px] rounded-full bg-[#F8F9FA] px-[15px] flex items-center gap-x-[8px] text-gray-900 text-sm font-normal leading-[100%] cursor-pointer">
 			<span
