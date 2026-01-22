@@ -9,7 +9,15 @@ import { environment } from '../../../environments/environment.development';
 export class Account {
   private http = inject(HttpClient);
 
-  login(data: { initData: string; invite_token?: string }): Observable<string> {
-    return this.http.post<string>(`${environment.apiUrl}/accounts/auth/telegram`, data);
+  login(data: {
+    initData: string;
+    invite_token?: string;
+  }): Observable<{ access_token: string; refresh_token: string }> {
+    return this.http.post<{ access_token: string; refresh_token: string }>(
+      `${environment.apiUrl}/accounts/auth/telegram/`,
+      {
+        initData: data.initData,
+      },
+    );
   }
 }
