@@ -8,6 +8,9 @@
   "newProjectRoot": "projects",
   "projects": {
     "ContactPiker": {
+      "i18n": {
+        "sourceLocale": "ru-RU"
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -29,7 +32,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": ["src/material-theme.scss", "src/styles.css"]
           },
           "configurations": {
             "production": {
