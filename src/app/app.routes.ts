@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { planRoutes } from './features/plan';
 import { Start } from './features';
 
 export const routes: Routes = [
@@ -7,16 +8,7 @@ export const routes: Routes = [
     component: Start,
     data: { menu: true },
   },
-  {
-    path: 'plans',
-    loadComponent: () => import('./features').then((p) => p.Plan),
-    data: { menu: true },
-  },
-  {
-    path: 'create-plan',
-    loadComponent: () => import('./features').then((p) => p.CreatePlan),
-    data: { menu: false },
-  },
+  ...planRoutes,
   {
     path: '',
     redirectTo: 'start',
