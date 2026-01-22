@@ -1,0 +1,30 @@
+<div class="p-[15px]">
+	<div class="flex items-center justify-between">
+		<h1 class="text-2xl font-bold text-gray-900 capitalize">
+			{{ currentMonth }} {{ currentYear }}
+		</h1>
+		<button
+			class="cursor-pointer bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[36px] w-fit px-[20px] text-[13px] font-bold leading-[100%] text-white">
+			Сегодня
+		</button>
+	</div>
+	<div class="my-[30px]">
+		<ul class="grid grid-cols-7 gap-x-[10px]">
+			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Пн</li>
+			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Вт</li>
+			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Ср</li>
+			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Чт</li>
+			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Пт</li>
+			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Сб</li>
+			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Вс</li>
+		</ul>
+		<ul class="grid grid-cols-7 gap-[10px] mt-[20px]">
+			@for (day of [].constructor(currentMonthDays); let i = $index; track i) {
+			<li
+				class="bg-gray-100 cursor-pointer aspect-square rounded-xl content-center text-center text-base font-semibold leading-[100%]">
+				{{ i + 1 }}
+			</li>
+			}
+		</ul>
+	</div>
+</div>
