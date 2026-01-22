@@ -18,14 +18,23 @@ export class Plan {
 		return this.http.post<void>(`${environment.apiUrl}/plans/create/`, data);
 	}
 
-	plansList(date?: string, filter_type?: 'new' | 'date'): Observable<IPlansRes> {
-		const params = new HttpParams();
-		if (date) {
-			params.append('date', date)
+	plansList(
+		data: { date?: string; filter_type?: 'new' | 'date' }
+	): Observable<IPlansRes> {
+		let params = new HttpParams();
+
+		if (data.date) {
+			params = params.set('date', data.date);
 		}
-		if (filter_type) {
-			params.append('filter_type', filter_type)
+
+		if (data.filter_type) {
+			params = params.set('filter_type', data.filter_type);
 		}
-		return this.http.get<IPlansRes>(`${environment.apiUrl}/plans/list/`, { params });
+
+		return this.http.get<IPlansRes>(
+			`${environment.apiUrl}/plans/list/`,
+			{ params }
+		);
 	}
+
 }

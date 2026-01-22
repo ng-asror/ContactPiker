@@ -22,7 +22,7 @@
 			@if(!plans.isLoading()) {
 			@for (day of plans.value(); let i = $index; track i) {
 			<li (click)="selectDay.set(i + 1)"
-				class="bg-gray-100 cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%] hover:bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)] hover:text-white"
+				class="bg-gray-100 cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%]"
 				[class.bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)]]="selectDay() === i + 1"
 				[class.text-white]="selectDay() === i + 1">
 				{{day.day}}
@@ -61,7 +61,7 @@
 								class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
 								М</li>
 							<li
-								class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-2 text-gray-500 text-sm font-bold">
+								class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-3 text-gray-500 text-sm font-bold">
 								+2</li>
 						</ul>
 					</div>

@@ -29,7 +29,7 @@ export class Plans implements OnInit, OnDestroy {
 
 	// Variables
 	protected days = Array.from({ length: 31 });
-	protected currentMonth: string = new Date().toLocaleString('ru-RU', { month: 'long' });
+	protected currentMonth: string = new Date().toLocaleString('ru', { month: 'long' });
 	protected currentYear: number = new Date().getFullYear();
 	protected currentMonthIndex: number = new Date().getMonth() + 1;
 	protected currentDay: number = new Date().getDate();
@@ -44,12 +44,16 @@ export class Plans implements OnInit, OnDestroy {
 
 	// resources
 	plans = resource({
-		loader: () => firstValueFrom(this.planService.plansList()).then((res) => {
+		loader: () => firstValueFrom(this.planService.plansList({ filter_type: 'new' })).then((res) => {
 			return this.buildMonthPlans(res.approved_and_yours_plans)
 		})
 	});
 
 	ngOnInit(): void {
+		this.planService.plansList({ filter_type: 'new' }).subscribe((res) => {
+			console.log(res);
+
+		})
 		this.telegram.showBackButton('/start');
 	}
 	ngOnDestroy(): void {
