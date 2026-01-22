@@ -14,41 +14,27 @@
 			}
 		</ul>
 	</div>
-	<div>
-		<label class="text-sm font-bold leading-[100%] text-gray-900" for="titleInput">Выбери эмодзи</label>
-		<input type="text" id="titleInput"
-			class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
-			placeholder="Пицца с Аней" />
-	</div>
-	<div>
-		<label class="text-sm font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
-		<input type="datetime-local" id="kagda"
-			class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]" />
-	</div>
-	<div>
-		<label class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Где?</label>
-		<input type="text" id="gde"
-			class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
-			placeholder="Додо Пицца, Тверская 10" />
-	</div>
-	<ul class="flex flex-wrap gap-[10px]">
-		@for (friend of friends.value(); track friend.id) {
-		<li
-			class="w-fit h-[36px] rounded-full bg-[#F8F9FA] px-[15px] flex items-center gap-x-[8px] text-gray-900 text-sm font-normal leading-[100%] cursor-pointer">
-			<span
-				class="shrink-[0] text-center content-center rounded-full w-[20px] h-[20px] text-white bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] text-[10px] font-bold leading-1">{{
-				friend.name.slice(0, 1) }}
-			</span>
-			{{ friend.name }}
-		</li>
-		}
-		<li class="w-[36px] aspect-square content-center rounded-full bg-[#F8F9FA] cursor-pointer">
-			<img src="svg/plus.svg" alt="plus.svg" fetchpriority="high" loading="eager" width="20" height="20"
-				class="block mx-auto" />
-		</li>
-	</ul>
-	<button type="submit"
-		class="bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer">
-		Создать план
-	</button>
+	<form [formGroup]="planF" (ngSubmit)="createPlan()" class="space-y-[20px]">
+		<div>
+			<label class="text-sm font-bold leading-[100%] text-gray-900" for="titleInput">Выбери эмодзи</label>
+			<input type="text" id="titleInput" formControlName="name"
+				class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
+				placeholder="Пицца с Аней" required />
+		</div>
+		<div>
+			<label class="text-sm font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
+			<input type="datetime-local" id="kagda" formControlName="datetime" required
+				class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]" />
+		</div>
+		<div>
+			<label class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Где?</label>
+			<input type="text" id="gde" formControlName="location"
+				class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
+				placeholder="Додо Пицца, Тверская 10" required />
+		</div>
+		<button type="submit"
+			class="bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer">
+			Создать план
+		</button>
+	</form>
 </div>
