@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, resource } from '@angular/core';
 import { Friends } from '../../services';
 import { firstValueFrom } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 @Component({
 	selector: 'app-main',
-	imports: [],
+	imports: [RouterLink],
+
 	templateUrl: './main.html',
 	styleUrl: './main.css',
 	changeDetection: ChangeDetectionStrategy.OnPush,

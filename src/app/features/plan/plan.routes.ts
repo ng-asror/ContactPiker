@@ -9,11 +9,9 @@ export const planRoutes: Routes = [
 	{
 		path: 'plans/:id',
 		loadComponent: () => import('./pages').then(p => p.PlanDetail),
-		data: { menubar: false }
 	},
 	{
 		path: 'create-plan',
 		loadComponent: () => import('./pages').then((p) => p.CreatePlan),
-		data: { menu: false },
 	},
 ];
