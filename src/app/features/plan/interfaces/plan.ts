@@ -38,3 +38,10 @@ export interface IUser {
 	created_at: Date;
 	updated_at: Date;
 }
+
+export interface IPlanShare {
+	id: number
+	token: string
+	link: string
+	msg: string
+}

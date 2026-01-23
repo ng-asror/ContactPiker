@@ -4,20 +4,21 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class Account {
-  private http = inject(HttpClient);
+	private http = inject(HttpClient);
 
-  login(data: {
-    initData: string;
-    invite_token?: string;
-  }): Observable<{ access_token: string; refresh_token: string }> {
-    return this.http.post<{ access_token: string; refresh_token: string }>(
-      `${environment.apiUrl}/accounts/auth/telegram/`,
-      {
-        initData: data.initData,
-      },
-    );
-  }
+	login(data: {
+		initData: string;
+		invite_token?: string | null;
+	}): Observable<{ access_token: string; refresh_token: string }> {
+		return this.http.post<{ access_token: string; refresh_token: string }>(
+			`${environment.apiUrl}/accounts/auth/telegram/`,
+			{
+				initData: data.initData,
+				invite_token: data.invite_token
+			},
+		);
+	}
 }

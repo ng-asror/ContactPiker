@@ -1,8 +1,8 @@
-import { HttpClient, HttpParams, withRequestsMadeViaParent } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
-import { IApprovedAndYoursPlan, IPlanReq, IPlansRes } from '../interfaces';
+import { IApprovedAndYoursPlan, IPlanReq, IPlanShare, IPlansRes } from '../interfaces';
 
 @Injectable({
 	providedIn: 'root',
@@ -39,5 +39,9 @@ export class Plan {
 
 	getPlan(id: string): Observable<IApprovedAndYoursPlan> {
 		return this.http.get<IApprovedAndYoursPlan>(`${environment.apiUrl}/plans/${id}/`);
+	}
+
+	sharePlan(plan_id: string): Observable<IPlanShare> {
+		return this.http.post<IPlanShare>(`${environment.apiUrl}/plans/${plan_id}/generate-token/`, {})
 	}
 }
