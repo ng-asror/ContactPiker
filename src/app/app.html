@@ -1,6 +1,6 @@
 <router-outlet />
 <div class="fixed z-10 inset-x-0 bottom-0 transition-transform duration-300 ease-in-out"
-	[class.translate-y-0]="show_menu()" [class.translate-y-full]="!show_menu()">
+	[class.translate-y-0]="show_menu()" [class.translate-y-[100px]]="!show_menu()">
 	<menu class="flex items-stratch w-full h-[50px] bg-white border-t-1 border-gray-200">
 		<li
 			class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] h-full text-center text-gray-500 font-normal text-xs leading-[100%]"
@@ -14,6 +14,9 @@
 			<img src="imgs/friends.png" alt="friends.png" fetchpriority="high" loading="eager" width="24" height="24" />
 			Друзья
 		</li>
+		<li routerLink="/start"
+			class="leading-1 w-[50px] h-[50px] mt-[-15px] cursor-pointer bg-[linear-gradient(135deg,#F093FB_0%,#F5576C_100%)] text-center content-center rounded-full text-white text-xl">
+			+</li>
 		<li
 			class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
 			routerLink="/calendar" routerLinkActive="text-gray-900 font-semibold">
