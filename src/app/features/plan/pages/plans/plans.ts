@@ -44,6 +44,7 @@ export class Plans {
 		0,
 	).getDate();
 	selectDayPlans: IApprovedAndYoursPlan[] = [];
+	todayPlan: IApprovedAndYoursPlan[] = [];
 
 	// signals
 	selectDay = signal<number | null>(this.currentDay);
@@ -89,6 +90,7 @@ export class Plans {
 			if (planDate.getFullYear() === this.currentYear &&
 				planDate.getMonth() + 1 === this.currentMonthIndex && planDate.getDate() === this.currentDay) {
 				this.selectDayPlans.push(plan)
+				this.todayPlan.push(plan)
 			}
 			// 🔹 Month plans
 			if (
