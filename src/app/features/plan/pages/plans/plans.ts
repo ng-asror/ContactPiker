@@ -2,18 +2,21 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	inject,
-	OnDestroy,
-	OnInit,
 	resource,
 	signal,
 } from '@angular/core';
 import { Plan as PlanService } from '../../services';
 import { Telegram } from '../../../../core';
 import { firstValueFrom } from 'rxjs';
+import { IApprovedAndYoursPlan, IPlansRes } from '../../interfaces';
 
 interface DayPlans<T> {
 	day: number;
 	plans: T[];
+}
+interface NearPlans<T> {
+	tomorrow: T[];
+	dayAfterTomorrow: T[];
 }
 
 @Component({
@@ -23,7 +26,7 @@ interface DayPlans<T> {
 	styleUrl: './plans.css',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Plans implements OnInit {
+export class Plans {
 	private telegram = inject(Telegram);
 	private planService = inject(PlanService);
 
@@ -38,6 +41,7 @@ export class Plans implements OnInit {
 		this.currentMonthIndex,
 		0,
 	).getDate();
+	selectDayPlans: IApprovedAndYoursPlan[] = [];
 
 	// signals
 	selectDay = signal<number | null>(this.currentDay);
@@ -49,34 +53,64 @@ export class Plans implements OnInit {
 		})
 	});
 
-	ngOnInit(): void {
-		this.planService.plansList({ filter_type: 'new' }).subscribe((res) => {
-			console.log(res);
-
-		})
-	}
-
 	// other functions
-	private buildMonthPlans<T extends { datetime: string }>(plans: T[]): DayPlans<T>[] {
-		const resoult: DayPlans<T>[] = Array.from(
+	private buildMonthPlans(
+		plans: IApprovedAndYoursPlan[]
+	): { monthPlans: DayPlans<IApprovedAndYoursPlan>[]; nearPlans: NearPlans<IApprovedAndYoursPlan> } {
+
+		const result: DayPlans<IApprovedAndYoursPlan>[] = Array.from(
 			{ length: this.currentMonthDays },
 			(_, i) => ({
 				day: i + 1,
 				plans: []
 			})
-		)
+		);
+
+		const nearPlans: NearPlans<IApprovedAndYoursPlan> = {
+			tomorrow: [],
+			dayAfterTomorrow: [],
+		};
+
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		const tomorrow = new Date(today);
+		tomorrow.setDate(today.getDate() + 1);
+
+		const dayAfterTomorrow = new Date(today);
+		dayAfterTomorrow.setDate(today.getDate() + 2);
+
 		for (const plan of plans) {
 			const planDate = new Date(plan.datetime);
-
-			if (planDate.getFullYear() === this.currentYear && planDate.getMonth() + 1 === this.currentMonthIndex) {
+			planDate.setHours(0, 0, 0, 0);
+			// today plans 
+			if (planDate.getFullYear() === this.currentYear &&
+				planDate.getMonth() + 1 === this.currentMonthIndex && planDate.getDate() === this.currentDay) {
+				this.selectDayPlans.push(plan)
+			}
+			// 🔹 Month plans
+			if (
+				planDate.getFullYear() === this.currentYear &&
+				planDate.getMonth() + 1 === this.currentMonthIndex
+			) {
 				const dayIndex = planDate.getDate() - 1;
-				if (!resoult[dayIndex].plans) {
-					resoult[dayIndex].plans = []
-				}
-				resoult[dayIndex].plans!.push(plan)
+				result[dayIndex].plans!.push(plan);
+
+			}
+
+			// 🔹 tomorrow plans
+			if (planDate.getTime() === tomorrow.getTime()) {
+				nearPlans.tomorrow.push(plan);
+			}
+
+			// 🔹 dayAfterTomorrow plans
+			if (planDate.getTime() === dayAfterTomorrow.getTime()) {
+				nearPlans.dayAfterTomorrow.push(plan);
 			}
 		}
-
-		return resoult
+		return {
+			monthPlans: result,
+			nearPlans,
+		};
 	}
 }
