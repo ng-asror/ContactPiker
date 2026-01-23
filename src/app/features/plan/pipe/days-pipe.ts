@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DaysPipe implements PipeTransform {
 
-	transform(day: string): string {
+	transform(day: string, arg?: 'long'): string {
 		const planDate = new Date(day);
 		const today = new Date();
 
@@ -21,15 +21,40 @@ export class DaysPipe implements PipeTransform {
 		const minutes = planDate.getMinutes().toString().padStart(2, '0');
 
 		if (diffDays === 0) {
+			if (arg) {
+				return `Сегодня, ${planDate.toLocaleDateString('ru-RU', {
+					day: '2-digit',
+					month: 'long',
+				})} в ${hours}:${minutes}`
+			}
 			return `Сегодня в ${hours}:${minutes}`;
 		}
 
 		if (diffDays === 1) {
+			if (arg) {
+				return `Завтра, ${planDate.toLocaleDateString('ru-RU', {
+					day: '2-digit',
+					month: 'long',
+				})} в ${hours}:${minutes}`
+			}
 			return `Завтра в ${hours}:${minutes}`;
 		}
 
 		if (diffDays === 2) {
+			if (arg) {
+				return `Послезавтра, ${planDate.toLocaleDateString('ru-RU', {
+					day: '2-digit',
+					month: 'long',
+				})} в ${hours}:${minutes}`
+			}
 			return `Послезавтра в ${hours}:${minutes}`;
+		}
+
+		if (arg) {
+			return planDate.toLocaleDateString('ru-RU', {
+				day: '2-digit',
+				month: 'long',
+			}) + ` в ${hours}:${minutes}`;
 		}
 
 		// 🔹 QOLGAN HAMMA HOLATLAR UCHUN
@@ -37,7 +62,6 @@ export class DaysPipe implements PipeTransform {
 			day: '2-digit',
 			month: 'long',
 		}) + ` в ${hours}:${minutes}`;
-
 	}
 
 }
