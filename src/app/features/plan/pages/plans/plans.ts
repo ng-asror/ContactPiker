@@ -8,7 +8,9 @@ import {
 import { Plan as PlanService } from '../../services';
 import { Telegram } from '../../../../core';
 import { firstValueFrom } from 'rxjs';
-import { IApprovedAndYoursPlan, IPlansRes } from '../../interfaces';
+import { IApprovedAndYoursPlan } from '../../interfaces';
+import { DaysPipe } from '../../pipe';
+import { RouterLink } from '@angular/router';
 
 interface DayPlans<T> {
 	day: number;
@@ -21,7 +23,7 @@ interface NearPlans<T> {
 
 @Component({
 	selector: 'app-plans',
-	imports: [],
+	imports: [DaysPipe, RouterLink],
 	templateUrl: './plans.html',
 	styleUrl: './plans.css',
 	changeDetection: ChangeDetectionStrategy.OnPush,
