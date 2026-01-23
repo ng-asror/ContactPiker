@@ -44,13 +44,14 @@
 	@if(selectDayPlans.length) {
 	<div class="space-y-[12px]">
 		@for(item of selectDayPlans; track item.id) {
-		<a href="#!"
+		<a [routerLink]="item.id.toString()"
 			class="flex mt-[5px] items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]">
 			<p class="text-2xl leading-[100%]">{{item.emoji}}</p>
 			<div>
 				<b class="text-base font-bold text-gray-900 leading-[120%]">{{item.name}}</b>
 				<div class="mt-[10px]">
-					<p class="text-sm text-gray-400 leading-[100%] text-gray-500">{{item.datetime}} • {{item.location}}</p>
+					<p class="text-sm text-gray-400 leading-[100%] text-gray-500">{{item.datetime | day}} • {{item.location}}
+					</p>
 					@if(item.plan_users.length) {
 					<ul class="-space-x-2 mt-[5px]">
 						@for(user of item.plan_users.slice(0, 3); track user.id) {
