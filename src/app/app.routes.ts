@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { planRoutes } from './features/plan';
 import { Start } from './features';
 import { friendsRoutes } from './features/friends';
+import { profileRoutes } from './features/profile';
 
 export const routes: Routes = [
 	{
@@ -11,6 +12,7 @@ export const routes: Routes = [
 	},
 	...planRoutes,
 	...friendsRoutes,
+	...profileRoutes,
 	{
 		path: '',
 		redirectTo: 'start',
