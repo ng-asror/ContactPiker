@@ -9,10 +9,11 @@ import {
 } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
 import { Account, Telegram } from './core';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
 	selector: 'app-root',
-	imports: [RouterOutlet, RouterLink, RouterLinkActive],
+	imports: [RouterOutlet, RouterLink, RouterLinkActive, AsyncPipe],
 	templateUrl: './app.html',
 	styleUrl: './app.css',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,6 +26,9 @@ export class App implements OnInit {
 
 	// SIGNALS
 	show_menu = signal<boolean>(true);
+
+	// Subjects
+	profile$ = this.accountService.profile$;
 
 	constructor() {
 		this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
@@ -39,6 +43,7 @@ export class App implements OnInit {
 		if (!token) {
 			this.login();
 		}
+		firstValueFrom(this.accountService.profile())
 	}
 
 	private async login(): Promise<void> {
