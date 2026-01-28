@@ -22,7 +22,7 @@ export class Account {
 
 	login(data: {
 		initData: string;
-		invite_token?: string | null;
+		invite_token: string | null;
 	}): Observable<{ access_token: string; refresh_token: string }> {
 		return this.http.post<{ access_token: string; refresh_token: string }>(
 			`${environment.apiUrl}/accounts/auth/telegram/`,
