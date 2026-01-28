@@ -19,10 +19,6 @@ export class Telegram {
 	async getTgUser(): Promise<ITgUser> {
 		return await this.tg.initDataUnsafe;
 	}
-	async getUserLocalId(): Promise<string> {
-		const id = await this.getCloudStorage('tg_id');
-		return id;
-	}
 
 	init(headerColor: string): void {
 		this.tg.ready();
