@@ -3,6 +3,7 @@ import { planRoutes } from './features/plan';
 import { Start } from './features';
 import { friendsRoutes } from './features/friends';
 import { profileRoutes } from './features/profile';
+import { notificationRoutes } from './features/notification';
 
 export const routes: Routes = [
 	{
@@ -13,6 +14,7 @@ export const routes: Routes = [
 	...planRoutes,
 	...friendsRoutes,
 	...profileRoutes,
+	...notificationRoutes,
 	{
 		path: '',
 		redirectTo: 'start',
