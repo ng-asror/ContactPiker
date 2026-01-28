@@ -3,8 +3,12 @@ import { Observable } from 'rxjs';
 import { Telegram } from './telegram';
 
 interface WSMessage<T = any> {
-  event: string;
+  type: string;
   data: T;
+}
+interface WSIncomingMessage<T = any> {
+   type: string;
+  message: T; 
 }
 
 @Injectable({
@@ -24,7 +28,7 @@ export class Socket {
 
     this.ws.onmessage = (event) => {
       try {
-        const data: WSMessage = JSON.parse(event.data);
+        const data: WSIncomingMessage = JSON.parse(event.data);
         console.log('📩 WS message:', data);
       } catch (err) {
         console.error('WS parse error', err);
@@ -44,42 +48,43 @@ export class Socket {
 
   /** Event yuborish (Socket.IO emit analogi) */
   emit<T>(event: string, data: T): void {
-    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-      console.warn(`WS ulanmagan: emit "${event}" ishlamadi.`);
-      return;
-    }
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
 
-    const message: WSMessage<T> = { event, data };
-    this.ws.send(JSON.stringify(message));
+    this.ws.send(
+      JSON.stringify({
+        message: data,
+      }),
+    );
   }
 
   /** Event tinglash (Socket.IO on analogi) */
-  listen<T>(event: string): Observable<T> {
-    return new Observable<T>((observer) => {
-      if (!this.ws) {
-        console.warn(`WS ulanmagan: "${event}" ni tinglab bo‘lmaydi.`);
-        return;
-      }
+listen<T>(type: string): Observable<T> {
+  return new Observable<T>((observer) => {
+    if (!this.ws) {
+      console.warn(`WS ulanmagan: "${type}" ni tinglab bo‘lmaydi.`);
+      return;
+    }
 
-      const handler = (e: MessageEvent) => {
-        try {
-          const msg: WSMessage<T> = JSON.parse(e.data);
-          if (msg.event === event) {
-            observer.next(msg.data);
-          }
-        } catch (err) {
-          console.error('WS parse error:', err);
+    const handler = (e: MessageEvent) => {
+      try {
+        const msg: WSIncomingMessage<T> = JSON.parse(e.data);
+
+        if (msg.type === type) {
+          observer.next(msg.message);
         }
-      };
+      } catch (err) {
+        console.error('WS parse error:', err);
+      }
+    };
 
-      this.ws.addEventListener('message', handler);
+    this.ws.addEventListener('message', handler);
 
-      // unsubscribe bo‘lganda listener o‘chadi
-      return () => {
-        this.ws?.removeEventListener('message', handler);
-      };
-    });
-  }
+    return () => {
+      this.ws?.removeEventListener('message', handler);
+    };
+  });
+}
+
 
   /** Socket holatini olish */
   getSocket(): WebSocket | null {
