@@ -1,0 +1,58 @@
+@let room = roomResource.value();
+@let messages = messagesResource.value();
+@if (room) {
+  <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] bg-gray-100 h-dvh">
+    <a
+      [routerLink]="'232'"
+      class="flex items-center gap-x-[10px] p-[15px] justify-between bg-white"
+    >
+      <div class="flex items-center gap-x-[10px]">
+        <div class="w-[40px] h-[40px] text-center content-center bg-gray-100 rounded-lg text-xl">
+          {{ room.plan.emoji }}
+        </div>
+        <div>
+          <b class="text-sm text-gray-900 leading-[100%] font-semibold ellipsis">Salom</b>
+          <p class="block mt-[4px] ellipsis text-xs text-gray-500 leading-[100%]">
+            {{ room.plan.datetime | day }} • {{ room.plan.location }}
+          </p>
+        </div>
+      </div>
+      @if (room.members.length) {
+        <div class="flex items-center gap-x-[1px] text-sm leading-[100%]">
+          <span class="text-sm text-gray-500 leading-[100%] mt-[1px]">{{
+            room.members.length
+          }}</span
+          >👥
+        </div>
+      }
+    </a>
+    <section class="px-[15px] flex flex-col-reverse overflow-y-auto snap-y snap-proximity">
+        @for (message of messages; track message.id) {
+            <div class="snap-end w-full h-[100px] shrink-[0]"></div>
+        }
+    </section>
+    <div class="flex items-end gap-x-[10px] bg-white p-[10px] rounded-t-xl">
+      <label
+        class="flex-1 ring-1 p-[10px] inline-flex ring-[#E9ECEF] rounded-lg w-full h-auto transition-all duration-200 focus-within:ring-[#FA709A]"
+        for="msg"
+      >
+        <textarea
+          matInput
+          id="msg"
+          cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize"
+          cdkAutosizeMinRows="1"
+          placeholder="Написать сообщение..."
+          cdkAutosizeMaxRows="5"
+          class="w-full resize-none outline-none placeholder:text-black/50 bg-transparent"
+        ></textarea>
+      </label>
+      <button
+        type="button"
+        class="flex-none cursor-pointer rounded-xl w-[40px] h-[40px] shrink-[0] content-center text-center leading-1 bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
+      >
+        <img src="svg/send.svg" alt="send.svg" width="25" height="25" class="block mx-auto" />
+      </button>
+    </div>
+  </div>
+}

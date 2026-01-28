@@ -6,4 +6,9 @@ export const notificationRoutes: Routes = [
     loadComponent: () => import('./pages').then((p) => p.ChatsList),
     data: { menu: true },
   },
+  {
+    path: 'chats/:id',
+    loadComponent:() => import('./pages').then(p => p.Chat),
+    data: {manu: false}
+  }
 ];
