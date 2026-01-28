@@ -1,0 +1,28 @@
+<div
+  class="w-full h-auto shrink-[0] max-w-[calc(100%-42px)] items-start gap-x-[10px] flex"
+  [class.flex-row-reverse]="type() === 'left'"
+  [class.ml-auto]="type() === 'left'"
+>
+  <img
+    [src]="message().user.avatar"
+    alt="user.png"
+    class="rounded-full block shrink-[0]"
+    fetchpriority="low"
+    loading="lazy"
+    width="32"
+    height="32"
+  />
+  <div>
+    <p
+      class="block p-[10px] mb-[4px] break-all wrap-break-word rounded-xl text-sm text-gray-900 leading-[19px] font-normal bg-white"
+      [class.bg-[linear-gradient(101deg,#FA709A_0%,#FEE140_100%)]]="type() === 'left'" [class.text-white]="type() === 'left'"
+    >
+      {{ message().message }}
+    </p>
+    <span
+      class="text-gray-400 text-[11px] block leading-[100%]"
+      [class.text-end]="type() === 'left'"
+      >{{ message().created_at | date: 'HH:mm' }}</span
+    >
+  </div>
+</div>

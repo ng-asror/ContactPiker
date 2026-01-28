@@ -3,7 +3,7 @@
 @if (room) {
   <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] bg-gray-100 h-dvh">
     <a
-      [routerLink]="'232'"
+      [routerLink]="'/plans/' + room_id()"
       class="flex items-center gap-x-[10px] p-[15px] justify-between bg-white"
     >
       <div class="flex items-center gap-x-[10px]">
@@ -11,25 +11,33 @@
           {{ room.plan.emoji }}
         </div>
         <div>
-          <b class="text-sm text-gray-900 leading-[100%] font-semibold ellipsis">Salom</b>
+          <b class="text-sm text-gray-900 leading-[100%] font-semibold ellipsis">{{
+            room.plan.name
+          }}</b>
           <p class="block mt-[4px] ellipsis text-xs text-gray-500 leading-[100%]">
             {{ room.plan.datetime | day }} • {{ room.plan.location }}
           </p>
         </div>
       </div>
-      @if (room.members.length) {
-        <div class="flex items-center gap-x-[1px] text-sm leading-[100%]">
-          <span class="text-sm text-gray-500 leading-[100%] mt-[1px]">{{
-            room.members.length
-          }}</span
-          >👥
+    </a>
+    <section
+      class="px-[15px] flex flex-col-reverse overflow-y-auto snap-y snap-proximity"
+      #messagesContent
+    >
+      @for (message of messages; track message.id) {
+        <div class="py-[7.5px] first:pb-[15px] last:pt-[15px] snap-end">
+          @defer (on viewport) {
+            <app-message
+              [data]="message"
+              [position]="message.sender_type === 'initiator' ? 'left' : 'right'"
+            ></app-message>
+          } @loading {
+            <p></p>
+          } @placeholder {
+            <p></p>
+          }
         </div>
       }
-    </a>
-    <section class="px-[15px] flex flex-col-reverse overflow-y-auto snap-y snap-proximity">
-        @for (message of messages; track message.id) {
-            <div class="snap-end w-full h-[100px] shrink-[0]"></div>
-        }
     </section>
     <div class="flex items-end gap-x-[10px] bg-white p-[10px] rounded-t-xl">
       <label
@@ -37,6 +45,7 @@
         for="msg"
       >
         <textarea
+          [(ngModel)]="message"
           matInput
           id="msg"
           cdkTextareaAutosize
@@ -48,8 +57,11 @@
         ></textarea>
       </label>
       <button
+        [disabled]="!message.trim().length"
+        (click)="sendMessage()"
         type="button"
         class="flex-none cursor-pointer rounded-xl w-[40px] h-[40px] shrink-[0] content-center text-center leading-1 bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
+        [class.opacity-50]="!message.trim().length"
       >
         <img src="svg/send.svg" alt="send.svg" width="25" height="25" class="block mx-auto" />
       </button>
