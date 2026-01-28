@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
-import { IApprovedAndYoursPlan, IPlanReq, IPlanShare, IPlansRes } from '../interfaces';
+import { IApprovedAndYoursPlan, IPlanReq, IPlanShare, IPlansRes, IRootPlanRes } from '../interfaces';
 
 @Injectable({
 	providedIn: 'root',
@@ -39,6 +39,10 @@ export class Plan {
 
 	getPlan(id: string): Observable<IApprovedAndYoursPlan> {
 		return this.http.get<IApprovedAndYoursPlan>(`${environment.apiUrl}/plans/${id}/`);
+	}
+
+	getPlanForToken(invite_token:string):Observable<IRootPlanRes> {
+		return this.http.get<IRootPlanRes>(`${environment.apiUrl}/plans/token/${invite_token}/`)
 	}
 
 	sharePlan(plan_id: string): Observable<IPlanShare> {
