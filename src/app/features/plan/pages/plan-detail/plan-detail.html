@@ -52,7 +52,7 @@
       </div>
       <div>
         <div class="flex items-center justify-between">
-          <b class="text-lg text-gray-900 block">Участники ({{ planValue.count_user }})</b>
+          <b class="text-lg text-gray-900 block">Участники ({{ planValue.user_plan_number }})</b>
           <button
             type="button"
             class="bg-gray-100 rounded-xl w-[40px] h-[40px] content-center cursor-pointer"
@@ -84,31 +84,29 @@
                   width="40"
                   height="40"
                 />
-				@if(item.user.id !== planValue.user.id) {
-					<h1 class="text-base leading-[100%] text-gray-900 font-bold">
-					  {{ item.user.first_name }} {{item.user.last_name}}
-					</h1>
-				} @else {
-					<h1 class="text-base leading-[100%] text-gray-900 font-bold">
-					 Ты (организатор)
-					</h1>
-				}
+                @if (item.user.id !== planValue.user.id) {
+                  <h1 class="text-base leading-[100%] text-gray-900 font-bold">
+                    {{ item.user.first_name }} {{ item.user.last_name }}
+                  </h1>
+                } @else {
+                  <h1 class="text-base leading-[100%] text-gray-900 font-bold">Ты (организатор)</h1>
+                }
               </div>
-              <img
-                src="imgs/check.png"
-                alt="check.png"
-                fetchpriority="low"
-                loading="lazy"
-                width="20"
-                height="20"
-                class="block"
-              />
+              @switch (item.status) {
+                @case ('Принято') {
+                  <div class="text-xl font-900 leading-[100%]">✅</div>
+                }
+                @case ('Ожидает ответа') {
+                  <div class="text-xl font-900 leading-[100%]">❓</div>
+                }
+              }
             </div>
           }
         }
       </div>
       <div class="flex items-stretch gap-x-[10px]">
         <button
+          [routerLink]="['/chats', id().toString()]"
           type="button"
           class="cursor-pointer flex-1 bg-[linear-gradient(106deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
         >
