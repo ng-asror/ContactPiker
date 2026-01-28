@@ -24,6 +24,7 @@ export class Telegram {
 		this.tg.ready();
 		this.tg.setHeaderColor(headerColor);
 		this.tg.expand();
+		this.tg.disableVerticalSwipes()
 		this.tg.enableClosingConfirmation();
 	}
 
