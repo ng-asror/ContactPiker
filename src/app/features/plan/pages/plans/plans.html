@@ -89,7 +89,7 @@
 						@for(item of plan.plan_users.slice(0, 3); track item.id) {
 						@if(item.user.avatar) {
 						<img [src]="item.user.avatar" alt="user.png" fetchpriority="low" loading="lazy" width="40" height="40"
-							class="block rounded-full">
+							class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
 						}
 						}
 						@if(plan.count_user > 3) {
@@ -116,7 +116,7 @@
 						@for(item of plan.plan_users.slice(0, 3); track item.id) {
 						@if(item.user.avatar) {
 						<img [src]="item.user.avatar" alt="user.png" fetchpriority="low" loading="lazy" width="40" height="40"
-							class="block rounded-full">
+							class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
 						}
 						}
 						@if(plan.count_user > 3) {
