@@ -8,7 +8,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
-import { Account, Telegram } from './core';
+import { Account, Socket, Telegram } from './core';
 import { AsyncPipe } from '@angular/common';
 import { Plan } from './features/plan';
 
@@ -20,6 +20,7 @@ import { Plan } from './features/plan';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
+  private socketService = inject(Socket);
   private router = inject(Router);
   private planService = inject(Plan);
   private activatedRoute = inject(ActivatedRoute);
@@ -54,6 +55,9 @@ export class App implements OnInit {
       }
     }
     firstValueFrom(this.accountService.profile());
+    
+    // Socket
+    this.socketService.initSocket(token, 'notification')
   }
 
   private async login(startParams: string | null): Promise<void> {
