@@ -24,7 +24,7 @@ interface IBasePlan {
     location: string;
     lat: number | string | null;
     lng: number | string | null;
-    datetime: string;
+    datetime: Date;
     user: IUser;
     count_user: number;
     created_at: Date | string;
