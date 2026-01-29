@@ -12,7 +12,7 @@ export interface IPlanUser {
     id: number;
     plan: number;
     user: IUser;
-    status: 'Принято' | 'Отклонено' | 'Ожидает ответа';
+    status: 'Принято' | 'Отклонено' | 'Ожидает ответа' | 'Удален из группы чата';
     created_at: Date | string;
     updated_at: Date | string;
 }

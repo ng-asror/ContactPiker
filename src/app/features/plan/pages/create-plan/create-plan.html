@@ -1,40 +1,125 @@
 <div class="p-[15px] space-y-[20px]">
-	<div>
-		<h5 class="text-sm font-bold leading-[100%] text-gray-900">Выбери эмодзи</h5>
-		<ul class="grid grid-cols-6 gap-[10px] mt-[5px]">
-			@for (item of emojiMock; track item.id) {
-			<li
-				class="rounded-xl bg-[#F8F9FA] aspect-square content-center cursor-pointer group hover:bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
-				[class.bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]]="
+  <div>
+    <h5 class="text-sm font-bold leading-[100%] text-gray-900">Выбери эмодзи</h5>
+    <ul class="grid grid-cols-6 gap-[10px] mt-[5px]">
+      @for (item of emojiMock; track item.id) {
+        <li
+          class="rounded-xl bg-[#F8F9FA] aspect-square content-center cursor-pointer group hover:bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
+          [class.bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]]="
             selectEmoji() === item.emoji
-          " (click)="setEmoji(item.emoji)">
-				<img [src]="'imgs/' + item.emoji_img" [alt]="item.emoji_img" fetchpriority="high" loading="eager"
-					class="block w-2/4 mx-auto group-hover:scale-110 transition-transform duration-300" />
-			</li>
-			}
-		</ul>
-	</div>
-	<form [formGroup]="planF" (ngSubmit)="createPlan()" class="space-y-[20px]">
-		<div>
-			<label class="text-sm font-bold leading-[100%] text-gray-900" for="titleInput">Выбери эмодзи</label>
-			<input type="text" id="titleInput" formControlName="name"
-				class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
-				placeholder="Пицца с Аней" required />
-		</div>
-		<div>
-			<label class="text-sm font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
-			<input type="datetime-local" id="kagda" formControlName="datetime" required [min]="formatLocalDate()"
-				class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]" />
-		</div>
-		<div>
-			<label class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Где?</label>
-			<input type="text" id="gde" formControlName="location"
-				class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
-				placeholder="Додо Пицца, Тверская 10" required />
-		</div>
-		<button type="submit"
-			class="bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer">
-			Создать план
-		</button>
-	</form>
+          "
+          (click)="setEmoji(item.emoji)"
+        >
+          <img
+            [src]="'imgs/' + item.emoji_img"
+            [alt]="item.emoji_img"
+            fetchpriority="high"
+            loading="eager"
+            class="block w-2/4 mx-auto group-hover:scale-110 transition-transform duration-300"
+          />
+        </li>
+      }
+    </ul>
+  </div>
+  <form [formGroup]="planF" (ngSubmit)="createPlan()" class="space-y-[20px]">
+    <div>
+      <label class="text-sm font-bold leading-[100%] text-gray-900" for="titleInput"
+        >Выбери эмодзи</label
+      >
+      <input
+        type="text"
+        id="titleInput"
+        formControlName="name"
+        class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
+        placeholder="Пицца с Аней"
+        required
+      />
+    </div>
+    <div>
+      <label class="text-sm font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
+      <input
+        type="datetime-local"
+        id="kagda"
+        formControlName="datetime"
+        required
+        [min]="formatLocalDate()"
+        class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
+      />
+    </div>
+    <div>
+      <label class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Где?</label>
+      <input
+        type="text"
+        id="gde"
+        formControlName="location"
+        class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
+        placeholder="Додо Пицца, Тверская 10"
+        required
+      />
+    </div>
+    @let friends = getFriends.value();
+    @if (friends && friends.length) {
+      <div>
+        <b class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Пригласить друзей</b>
+        <ul class="flex flex-wrap gap-[10px] mt-[5px]">
+          @for (item of friends; track item.user.id) {
+            <li
+              (click)="toggleFriends(item.user.id)"
+              [class.bg-[linear-gradient(111deg,#FA709A_0%,#FEE140_100%)]]="
+                selectedUserIds.has(item.user.id)
+              "
+              [class.text-white]="selectedUserIds.has(item.user.id)"
+              class="rounded-full text-sm cursor-pointer select-none font-normal leading-[100%] text-gray-900 inline-flex items-center gap-x-[8px] w-auto px-[15px] h-[36px] bg-gray-100"
+            >
+              <img
+                [src]="item.user.avatar"
+                alt="user.png"
+                class="block rounded-full shrink-[0]"
+                width="20"
+                height="20"
+                fetchpriority="high"
+                loading="eager"
+              />
+              {{ item.user.first_name }}
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    @if (!loader) {
+      <button
+        type="submit"
+        class="bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
+      >
+        Создать план
+      </button>
+    } @else {
+      <button
+        type="button"
+        class="flex items-center gap-x-[10px] justify-center bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
+      >
+        <svg
+          class="size-5 animate-spin text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        План создаётся…
+      </button>
+    }
+  </form>
 </div>

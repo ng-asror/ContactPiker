@@ -41,7 +41,8 @@
         type="datetime-local"
         id="kagda"
         formControlName="datetime"
-        required [min]="formatLocalDate()"
+        required
+        [min]="formatLocalDate()"
         class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
       />
     </div>
@@ -56,16 +57,42 @@
         required
       />
     </div>
-    <div>
+    @let planUsers = getPlanUsers.value();
+    @if (planUsers && planUsers.count_user > 0) {
+      <div>
+        <b class="text-sm font-bold leading-[100%] text-gray-900" for="gde"
+          >Участники ({{ planUsers.count_user }})</b
+        >
+        <ul class="flex flex-wrap gap-[10px] mt-[5px]">
+          @for (item of planUsers.plan_users; track item.user.id) {
+            @if (item.user.id !== planUsers.creator_id) {
+              <li
+                (click)="removeFriend(item.user.id)"
+                class="bg-gray-200 rounded-full text-sm cursor-pointer select-none font-normal leading-[100%] text-gray-900 inline-flex items-center gap-x-[8px] w-auto px-[10px] h-[36px]"
+              >
+                <div
+                  class="w-[20px] h-[20px] bg-red-400 rounded-full text-white content-center text-center"
+                >
+                  <span class="block mt-[2px]">✖</span>
+                </div>
+                {{ item.user.first_name }}
+              </li>
+            }
+          }
+        </ul>
+      </div>
+    }
+    <div class="flex gap-x-[10px]">
       <button
         type="submit"
-        class="bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
+        class="flex-1 bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
       >
         Обновить
       </button>
-      <button (click)="deletePlan()"
+      <button
+        (click)="deletePlan()"
         type="button"
-        class="bg-red-400 mt-3 text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
+        class="flex-1 bg-red-400 text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
       >
         Удалить
       </button>

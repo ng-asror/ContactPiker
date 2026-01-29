@@ -1,6 +1,7 @@
 @let planValue = plan.value();
 @let me = profile.value();
-@let creator = (planValue && planValue.user.id) === (me && me.id);
+@let creator = !!(planValue && me && planValue.user.id === me.id);
+
 @if (!plan.isLoading() && planValue) {
   <div class="p-[15px]">
     <div
@@ -74,49 +75,81 @@
           }
         </div>
         @if (planValue.plan_users.length) {
-          @for (item of planValue.plan_users; track item.id) {
-            <div
-              class="p-[10px] rounded-xl bg-gray-100 flex items-center justify-between gap-x-[15px] my-[15px_10px]"
-            >
-              <div class="flex items-center gap-x-[12px]">
-                <img
-                  [src]="item.user.avatar"
-                  alt="user.png"
-                  class="block rounded-full"
-                  fetchpriority="low"
-                  loading="lazy"
-                  width="40"
-                  height="40"
-                />
+          <div
+            class="p-[10px] rounded-xl bg-gray-100 flex items-center justify-between gap-x-[15px] my-[15px_10px]"
+          >
+            <div class="flex items-center gap-x-[12px]">
+              <img
+                [src]="planValue.user.avatar"
+                alt="user.png"
+                class="block rounded-full"
+                fetchpriority="low"
+                loading="lazy"
+                width="40"
+                height="40"
+              />
+              <h1 class="text-base leading-[100%] text-gray-900 font-bold">
                 @if (creator) {
-                  <h1 class="text-base leading-[100%] text-gray-900 font-bold">Ты (организатор)</h1>
+                  Ты (организатор)
                 } @else {
+                  {{ planValue.user.first_name }} {{ planValue.user.last_name }}
+                }
+              </h1>
+            </div>
+            <div class="text-xl font-900 leading-[100%]">✅</div>
+          </div>
+          @for (item of planValue.plan_users; track item.id) {
+            @if (item.user.id !== planValue.user.id) {
+              <div
+                [class.opacity-50]="item.status === 'Удален из группы чата'"
+                class="p-[10px] rounded-xl bg-gray-100 flex items-center justify-between gap-x-[15px] my-[15px_10px]"
+              >
+                <div class="flex items-center gap-x-[12px]">
+                  <img
+                    [src]="item.user.avatar"
+                    alt="user.png"
+                    class="block rounded-full"
+                    fetchpriority="low"
+                    loading="lazy"
+                    width="40"
+                    height="40"
+                  />
                   <h1 class="text-base leading-[100%] text-gray-900 font-bold">
                     {{ item.user.first_name }} {{ item.user.last_name }}
                   </h1>
-                }
+                </div>
+                <div class="text-xl font-900 leading-[100%]">
+                  @switch (item.status) {
+                    @case ('Принято') {
+                      ✅
+                    }
+                    @case ('Ожидает ответа') {
+                      ❓
+                    }
+                    @case ('Отклонено') {
+                      ❌
+                    }
+                    @case ('Удален из группы чата') {
+                      👻
+                    }
+                  }
+                </div>
               </div>
-              @switch (item.status) {
-                @case ('Принято') {
-                  <div class="text-xl font-900 leading-[100%]">✅</div>
-                }
-                @case ('Ожидает ответа') {
-                  <div class="text-xl font-900 leading-[100%]">❓</div>
-                }
-              }
-            </div>
+            }
           }
         }
       </div>
-      @if (!creator && pending) {
+      @if (!creator && pending()) {
         <div class="flex mb-3 items-stretch gap-x-[10px]">
-          <button (click)="approve()"
+          <button
+            (click)="approve()"
             type="button"
             class="cursor-pointer flex-1 bg-green-400 rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
           >
             ✔ Одобрить
           </button>
-          <button (click)="reject()"
+          <button
+            (click)="reject()"
             type="button"
             class="cursor-pointer flex-1 bg-red-400 rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
           >
@@ -124,40 +157,115 @@
           </button>
         </div>
       }
-      <div class="flex items-stretch gap-x-[10px]">
-        <button
-          [routerLink]="['/chats', id().toString()]"
-          type="button"
-          class="cursor-pointer flex-1 bg-[linear-gradient(106deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
-        >
-          <img
-            src="imgs/chat.png"
-            alt="chat.png"
-            fetchpriority="high"
-            loading="eager"
-            width="20"
-            height="20"
-          />
-          Чат
-        </button>
-        @if (creator) {
+      @if(true) {
+        <div class="flex items-stretch gap-x-[10px]">
           <button
-            [routerLink]="['/update-plan', id().toString()]"
+            [routerLink]="['/chats', id().toString()]"
             type="button"
-            class="cursor-pointer flex-1 bg-[linear-gradient(106deg,#F093FB_0%,#F5576C_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
+            class="cursor-pointer flex-1 bg-[linear-gradient(106deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
           >
             <img
-              src="imgs/pen.png"
-              alt="pen.png"
+              src="imgs/chat.png"
+              alt="chat.png"
               fetchpriority="high"
               loading="eager"
-              width="19"
-              height="19"
+              width="20"
+              height="20"
             />
-            Изменить
+            Чат
           </button>
-        }
-      </div>
+          @if (creator) {
+            <button
+              [routerLink]="['/update-plan', id().toString()]"
+              type="button"
+              class="cursor-pointer flex-1 bg-[linear-gradient(106deg,#F093FB_0%,#F5576C_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
+            >
+              <img
+                src="imgs/pen.png"
+                alt="pen.png"
+                fetchpriority="high"
+                loading="eager"
+                width="19"
+                height="19"
+              />
+              Изменить
+            </button>
+          }
+        </div>
+      }
     </div>
   </div>
+
+  <dialog
+    #shareModal
+    class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[320px] rounded-xl p-[15px]"
+  >
+    <h1 class="text-lg leading-[100%] text-gray-900 font-semibold">Друзья</h1>
+    <button
+      class="w-[25px] h-[25px] rounded-full bg-gray-100 text-gray-500 leading-[100%] cursor-pointer text-center content-center absolute top-[10px] right-[10px]"
+      type="button"
+      (click)="shareModal.close()"
+    >
+      &times;
+    </button>
+    <ul class="flex flex-wrap gap-[10px] my-[10px]">
+      @for (item of friends; track item.user.id) {
+        <li
+          (click)="toggleFriends(item.user.id)"
+          [class.bg-[linear-gradient(111deg,#FA709A_0%,#FEE140_100%)]]="
+            selectedFriendsId.has(item.user.id)
+          "
+          [class.text-white]="selectedFriendsId.has(item.user.id)"
+          class="rounded-full text-sm cursor-pointer select-none font-normal leading-[100%] text-gray-900 inline-flex items-center gap-x-[8px] w-auto px-[10px] h-[36px] bg-gray-100"
+        >
+          <img
+            [src]="item.user.avatar"
+            alt="user.png"
+            class="block rounded-full shrink-[0]"
+            width="20"
+            height="20"
+            fetchpriority="high"
+            loading="eager"
+          />
+          {{ item.user.first_name }}
+        </li>
+      }
+    </ul>
+    @if (!addFriendLoading) {
+      <button
+        type="button"
+        class="w-full cursor-pointer flex-1 bg-[linear-gradient(106deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
+        (click)="addFriends()"
+      >
+        Добавить
+      </button>
+    } @else {
+      <button
+        type="button"
+        class="flex items-center gap-x-[10px] justify-center bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
+      >
+        <svg
+          class="size-5 animate-spin text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        Добавляем…
+      </button>
+    }
+  </dialog>
 }

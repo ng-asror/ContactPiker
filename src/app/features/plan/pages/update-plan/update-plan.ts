@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, resource, signal } from '@angular/core';
 import { NonNullableFormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { first, firstValueFrom } from 'rxjs';
 import { IPopup, Telegram } from '../../../../core';
 import { Plan } from '../../services';
 import { planEmojies } from '../create-plan/plan-emojies';
+import { Friends } from '../../../friends';
 
 @Component({
   selector: 'app-update-plan',
@@ -18,6 +19,8 @@ export class UpdatePlan {
   private fb = inject(NonNullableFormBuilder);
   private telegram = inject(Telegram);
   private routerService = inject(Router);
+  private friendsService = inject(Friends);
+
   // Mocks
   protected emojiMock = planEmojies;
 
@@ -27,11 +30,11 @@ export class UpdatePlan {
   // signals
   protected selectEmoji = signal<string>(this.emojiMock[0].emoji);
   protected plan_id = input.required<string>({ alias: 'id' });
+  protected selectedUserIds = new Set<number>();
 
-  ngOnInit(): void {
-    this.telegram.showBackButton('/start');
-
-    if (this.plan_id()) {
+  // Resources
+  getPlanUsers = resource({
+    loader: () =>
       firstValueFrom(this.planService.getPlan(String(this.plan_id()))).then((res) => {
         this.planF.setValue({
           name: res.name,
@@ -42,8 +45,16 @@ export class UpdatePlan {
         if (selectEmoji) {
           this.selectEmoji.set(selectEmoji.emoji);
         }
-      });
-    }
+        return {
+          plan_users: res.plan_users.filter((item) => item.status === 'Принято'),
+          count_user: res.count_user - 1,
+          creator_id: res.user.id,
+        };
+      }),
+  });
+
+  ngOnInit(): void {
+    this.telegram.showBackButton('/start');
   }
 
   formatLocalDate(): string {
@@ -91,6 +102,21 @@ export class UpdatePlan {
         });
       }
     });
+  }
+  // removeFriend()
+  async removeFriend(user_id: number): Promise<void> {
+    const res = await firstValueFrom(
+      this.friendsService.removeFriend(this.plan_id(), String(user_id)),
+    );
+    this.getPlanUsers.update((old) =>
+      old
+        ? {
+            ...old,
+            count_user: old.count_user - 1,
+            plan_users: old.plan_users.filter((user) => user.user.id !== user_id),
+          }
+        : old,
+    );
   }
 
   ngOnDestroy(): void {

@@ -5,6 +5,7 @@ import {
   input,
   OnDestroy,
   OnInit,
+  resource,
   signal,
 } from '@angular/core';
 import { planEmojies } from './plan-emojies';
@@ -13,6 +14,7 @@ import { Plan } from '../../services';
 import { Telegram } from '../../../../core';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { Router } from '@angular/router';
+import { Friends } from '../../../friends/services';
 
 @Component({
   selector: 'app-create-plan',
@@ -26,15 +28,24 @@ export class CreatePlan implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private telegram = inject(Telegram);
   private routerService = inject(Router);
+  private friendsService = inject(Friends);
+
   // Mocks
   protected emojiMock = planEmojies;
 
   // Variables
   protected planF: FormGroup;
+  protected loader: boolean = false;
 
   // signals
   protected selectEmoji = signal<string>(this.emojiMock[0].emoji);
   protected plan_id = input.required<string | null>({ alias: 'id' });
+  protected selectedUserIds = new Set<number>();
+
+  // resources
+  getFriends = resource({
+    loader: () => firstValueFrom(this.friendsService.getFriends()).then((res) => res.friends),
+  });
 
   ngOnInit(): void {
     this.telegram.showBackButton('/start');
@@ -55,12 +66,17 @@ export class CreatePlan implements OnInit, OnDestroy {
 
   // create btn
   protected async createPlan(): Promise<void> {
+    this.loader = true;
     const getFormValue = this.planF.getRawValue();
     if (this.planF.valid) {
       await firstValueFrom(
         this.planService.createPlan({ ...getFormValue, emoji: this.selectEmoji() }),
-      ).then(() => {
-        this.routerService.navigate(['/plans']);
+      ).then((res) => {
+        firstValueFrom(
+          this.planService.sendFriends(String(res.id), Array.from(this.selectedUserIds)),
+        ).then(() => {
+          this.routerService.navigate(['/plans']);
+        });
       });
     }
   }
@@ -69,6 +85,10 @@ export class CreatePlan implements OnInit, OnDestroy {
     const date = new Date();
     const pad = (n: number) => n.toString().padStart(2, '0');
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  protected toggleFriends(id: number): void {
+    this.selectedUserIds.has(id) ? this.selectedUserIds.delete(id) : this.selectedUserIds.add(id);
   }
 
   ngOnDestroy(): void {

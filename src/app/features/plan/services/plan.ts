@@ -21,8 +21,14 @@ export class Plan {
     return this.http.get<void>(`${environment.apiUrl}/plans/friends`);
   }
 
-  createPlan(data: IPlanReq): Observable<void> {
-    return this.http.post<void>(`${environment.apiUrl}/plans/create/`, data);
+  sendFriends(plan_id: string, user_ids: number[]): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/plans/${plan_id}/generate-token/friends/`, {
+      user_ids,
+    });
+  }
+
+  createPlan(data: IPlanReq): Observable<IApprovedAndYoursPlan> {
+    return this.http.post<IApprovedAndYoursPlan>(`${environment.apiUrl}/plans/create/`, data);
   }
 
   updatePlan(plan_id: string, data: IPlanReq): Observable<void> {

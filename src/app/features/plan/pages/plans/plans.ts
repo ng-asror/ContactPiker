@@ -52,69 +52,80 @@ export class Plans {
 	// resources
 	plans = resource({
 		loader: () => firstValueFrom(this.planService.plansList({})).then((res) => {
-			return this.buildMonthPlans(res.approved_and_yours_plans)
+			return this.buildMonthPlans(res.approved_and_yours_plans, res.pending_plans)
 		})
 	});
 
 	// other functions
-	private buildMonthPlans(
-		plans: IApprovedAndYoursPlan[]
-	): { monthPlans: DayPlans<IApprovedAndYoursPlan>[]; nearPlans: NearPlans<IApprovedAndYoursPlan> } {
+private buildMonthPlans(
+  approvedPlans: IApprovedAndYoursPlan[],
+  pendingPlans: IApprovedAndYoursPlan[]
+): {
+  monthPlans: DayPlans<IApprovedAndYoursPlan>[];
+  nearPlans: NearPlans<IApprovedAndYoursPlan>;
+} {
+  // oy kunlarini tayyorlaymiz
+  const result: DayPlans<IApprovedAndYoursPlan>[] = Array.from(
+    { length: this.currentMonthDays },
+    (_, i) => ({
+      day: i + 1,
+      plans: [],
+    })
+  );
 
-		const result: DayPlans<IApprovedAndYoursPlan>[] = Array.from(
-			{ length: this.currentMonthDays },
-			(_, i) => ({
-				day: i + 1,
-				plans: []
-			})
-		);
+  const nearPlans: NearPlans<IApprovedAndYoursPlan> = {
+    tomorrow: [],
+    dayAfterTomorrow: [],
+  };
 
-		const nearPlans: NearPlans<IApprovedAndYoursPlan> = {
-			tomorrow: [],
-			dayAfterTomorrow: [],
-		};
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
 
-		const tomorrow = new Date(today);
-		tomorrow.setDate(today.getDate() + 1);
+  const dayAfterTomorrow = new Date(today);
+  dayAfterTomorrow.setDate(today.getDate() + 2);
 
-		const dayAfterTomorrow = new Date(today);
-		dayAfterTomorrow.setDate(today.getDate() + 2);
+  // ✅ approved + yours + pending ni birlashtiramiz
+  const allPlans = [...approvedPlans, ...pendingPlans];
 
-		for (const plan of plans) {
-			const planDate = new Date(plan.datetime);
-			planDate.setHours(0, 0, 0, 0);
-			// today plans 
-			if (planDate.getFullYear() === this.currentYear &&
-				planDate.getMonth() + 1 === this.currentMonthIndex && planDate.getDate() === this.currentDay) {
-				this.selectDayPlans.push(plan)
-				this.todayPlan.push(plan)
-			}
-			// 🔹 Month plans
-			if (
-				planDate.getFullYear() === this.currentYear &&
-				planDate.getMonth() + 1 === this.currentMonthIndex
-			) {
-				const dayIndex = planDate.getDate() - 1;
-				result[dayIndex].plans!.push(plan);
+  for (const plan of allPlans) {
+    const planDate = new Date(plan.datetime);
+    planDate.setHours(0, 0, 0, 0);
 
-			}
+    // today plans
+    if (
+      planDate.getFullYear() === this.currentYear &&
+      planDate.getMonth() + 1 === this.currentMonthIndex &&
+      planDate.getDate() === this.currentDay
+    ) {
+      this.selectDayPlans.push(plan);
+      this.todayPlan.push(plan);
+    }
 
-			// 🔹 tomorrow plans
-			if (planDate.getTime() === tomorrow.getTime()) {
-				nearPlans.tomorrow.push(plan);
-			}
+    // month plans
+    if (
+      planDate.getFullYear() === this.currentYear &&
+      planDate.getMonth() + 1 === this.currentMonthIndex
+    ) {
+      const dayIndex = planDate.getDate() - 1;
+      result[dayIndex].plans!.push(plan);
+    }
 
-			// 🔹 dayAfterTomorrow plans
-			if (planDate.getTime() === dayAfterTomorrow.getTime()) {
-				nearPlans.dayAfterTomorrow.push(plan);
-			}
-		}
-		return {
-			monthPlans: result,
-			nearPlans,
-		};
-	}
+    // near plans
+    if (planDate.getTime() === tomorrow.getTime()) {
+      nearPlans.tomorrow.push(plan);
+    }
+    if (planDate.getTime() === dayAfterTomorrow.getTime()) {
+      nearPlans.dayAfterTomorrow.push(plan);
+    }
+  }
+
+  return {
+    monthPlans: result,
+    nearPlans,
+  };
+}
+
 }
