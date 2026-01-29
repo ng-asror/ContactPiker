@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, resource, signal } from '@angular/core';
 import { Friends } from '../../services';
-import { filter, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { IFriend } from '../../interface';
 
