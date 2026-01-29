@@ -10,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Notification } from '../../services';
 import { firstValueFrom } from 'rxjs';
@@ -29,6 +30,7 @@ export class Chat implements OnInit, OnDestroy {
   private notificationService = inject(Notification);
   private telegramService = inject(Telegram);
   private socketService = inject(Socket);
+  private zone = inject(NgZone);
 
   // Variables
   protected message: string = '';
@@ -71,6 +73,9 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   listenMessages(): void {
+    const sfdds = this.messagesContent.nativeElement;
+    console.log(sfdds.scrollHeight);
+
     this.socketService.listen<IMessage>('chat_message').subscribe({
       next: (res: IMessage) => {
         this.messagesResource.update((messages) =>
@@ -78,13 +83,16 @@ export class Chat implements OnInit, OnDestroy {
         );
 
         // scrollTo
-        const el = this.messagesContent.nativeElement;
-        setTimeout(() => {
-          el.scrollTo({
-            top: el.scrollHeight + 100,
-            behavior: 'smooth',
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const el = this.messagesContent.nativeElement;
+            console.log(el.scrollHeight);
+            el.scrollTo({
+              top: el.scrollHeight,
+              behavior: 'smooth',
+            });
           });
-        }, 500);
+        });
       },
     });
   }
