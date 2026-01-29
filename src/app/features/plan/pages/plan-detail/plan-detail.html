@@ -157,7 +157,7 @@
           </button>
         </div>
       }
-      @if(true) {
+      @if(!pending()) {
         <div class="flex items-stretch gap-x-[10px]">
           <button
             [routerLink]="['/chats', id().toString()]"
