@@ -8,21 +8,14 @@ import {
   resource,
 } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Telegram } from '../../../../core';
+import { Account, IPopup, Telegram } from '../../../../core';
 import { Plan as PlanService } from '../../services';
 import { firstValueFrom } from 'rxjs';
 import { DaysPipe } from '../../pipe';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-interface IPopup {
-  title: string;
-  message: string;
-  buttons: {
-    id: string;
-    type: 'default' | 'destructive' | 'cancel';
-    text: string;
-  }[];
-}
+import { IPlanUser } from '../../interfaces';
+
 @Component({
   selector: 'app-plan-detail',
   imports: [RouterLink, DaysPipe, DatePipe],
@@ -34,20 +27,49 @@ export class PlanDetail implements OnInit, OnDestroy {
   private telegram = inject(Telegram);
   private clipboard = inject(Clipboard);
   private planService = inject(PlanService);
+  private accountService = inject(Account);
+
+  // Variables
+  protected pending: boolean = false;
 
   // inputs
   id = input<string>('id');
 
   // resources
   plan = resource({
-    loader: () => firstValueFrom(this.planService.getPlan(this.id())),
+    loader: () =>
+      firstValueFrom(this.planService.getPlan(this.id())).then((res) => {
+        const profile = this.profile.value();
+        if (profile) {
+          this.pending =
+            res.plan_users.find((user) => user.id === profile.id)?.status === 'Ожидает ответа';
+        }
+        return res;
+      }),
+  });
+
+  profile = resource({
+    loader: () => firstValueFrom(this.accountService.profile$),
   });
 
   ngOnInit(): void {
     this.telegram.showBackButton('/plans');
   }
-  ngOnDestroy(): void {
-    this.telegram.hiddeBackButton('/plans');
+
+  protected approve(): void {
+    firstValueFrom(this.planService.approvePlan(this.id())).then((res: IPlanUser) =>
+      this.plan.update((plan) =>
+        plan ? { ...plan, plan_users: [res, ...plan.plan_users] } : plan,
+      ),
+    );
+  }
+
+  protected reject(): void {
+    firstValueFrom(this.planService.rejectPlan(this.id())).then((res: IPlanUser) =>
+      this.plan.update((plan) =>
+        plan ? { ...plan, plan_users: [{ ...res }, ...plan.plan_users] } : plan,
+      ),
+    );
   }
 
   async sharePlan(): Promise<void> {
@@ -67,5 +89,9 @@ export class PlanDetail implements OnInit, OnDestroy {
         if (buttonId === 'share') this.telegram.open(full_url);
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.telegram.hiddeBackButton('/plans');
   }
 }

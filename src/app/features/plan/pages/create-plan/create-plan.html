@@ -23,7 +23,7 @@
 		</div>
 		<div>
 			<label class="text-sm font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
-			<input type="datetime-local" id="kagda" formControlName="datetime" required
+			<input type="datetime-local" id="kagda" formControlName="datetime" required [min]="formatLocalDate()"
 				class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]" />
 		</div>
 		<div>

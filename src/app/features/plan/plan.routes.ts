@@ -14,4 +14,8 @@ export const planRoutes: Routes = [
 		path: 'create-plan',
 		loadComponent: () => import('./pages').then((p) => p.CreatePlan),
 	},
+	{
+		path: 'update-plan/:id',
+		loadComponent: () => import('./pages').then((p) => p.UpdatePlan),
+	},
 ];

@@ -1,4 +1,6 @@
 @let planValue = plan.value();
+@let me = profile.value();
+@let creator = (planValue && planValue.user.id) === (me && me.id);
 @if (!plan.isLoading() && planValue) {
   <div class="p-[15px]">
     <div
@@ -53,21 +55,23 @@
       <div>
         <div class="flex items-center justify-between">
           <b class="text-lg text-gray-900 block">Участники ({{ planValue.user_plan_number }})</b>
-          <button
-            type="button"
-            class="bg-gray-100 rounded-xl w-[40px] h-[40px] content-center cursor-pointer"
-            (click)="sharePlan()"
-          >
-            <img
-              src=" imgs/plus.png"
-              alt="plus.png"
-              fetchpriority="high"
-              loading="eager"
-              width="19"
-              height="19"
-              class="block mx-auto"
-            />
-          </button>
+          @if (creator) {
+            <button
+              type="button"
+              class="bg-gray-100 rounded-xl w-[40px] h-[40px] content-center cursor-pointer"
+              (click)="sharePlan()"
+            >
+              <img
+                src=" imgs/plus.png"
+                alt="plus.png"
+                fetchpriority="high"
+                loading="eager"
+                width="19"
+                height="19"
+                class="block mx-auto"
+              />
+            </button>
+          }
         </div>
         @if (planValue.plan_users.length) {
           @for (item of planValue.plan_users; track item.id) {
@@ -84,12 +88,12 @@
                   width="40"
                   height="40"
                 />
-                @if (item.user.id !== planValue.user.id) {
+                @if (creator) {
+                  <h1 class="text-base leading-[100%] text-gray-900 font-bold">Ты (организатор)</h1>
+                } @else {
                   <h1 class="text-base leading-[100%] text-gray-900 font-bold">
                     {{ item.user.first_name }} {{ item.user.last_name }}
                   </h1>
-                } @else {
-                  <h1 class="text-base leading-[100%] text-gray-900 font-bold">Ты (организатор)</h1>
                 }
               </div>
               @switch (item.status) {
@@ -104,6 +108,22 @@
           }
         }
       </div>
+      @if (!creator && pending) {
+        <div class="flex mb-3 items-stretch gap-x-[10px]">
+          <button (click)="approve()"
+            type="button"
+            class="cursor-pointer flex-1 bg-green-400 rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
+          >
+            ✔ Одобрить
+          </button>
+          <button (click)="reject()"
+            type="button"
+            class="cursor-pointer flex-1 bg-red-400 rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
+          >
+            ❌ Отклонить
+          </button>
+        </div>
+      }
       <div class="flex items-stretch gap-x-[10px]">
         <button
           [routerLink]="['/chats', id().toString()]"
@@ -120,20 +140,23 @@
           />
           Чат
         </button>
-        <button
-          type="button"
-          class="cursor-pointer flex-1 bg-[linear-gradient(106deg,#F093FB_0%,#F5576C_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
-        >
-          <img
-            src="imgs/pen.png"
-            alt="pen.png"
-            fetchpriority="high"
-            loading="eager"
-            width="19"
-            height="19"
-          />
-          Изменить
-        </button>
+        @if (creator) {
+          <button
+            [routerLink]="['/update-plan', id().toString()]"
+            type="button"
+            class="cursor-pointer flex-1 bg-[linear-gradient(106deg,#F093FB_0%,#F5576C_100%)] rounded-full h-[52px] text-base font-bold text-white leading-[100%] flex items-center justify-center gap-x-[5px]"
+          >
+            <img
+              src="imgs/pen.png"
+              alt="pen.png"
+              fetchpriority="high"
+              loading="eager"
+              width="19"
+              height="19"
+            />
+            Изменить
+          </button>
+        }
       </div>
     </div>
   </div>

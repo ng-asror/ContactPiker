@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  input,
   OnDestroy,
   OnInit,
   signal,
@@ -33,6 +34,7 @@ export class CreatePlan implements OnInit, OnDestroy {
 
   // signals
   protected selectEmoji = signal<string>(this.emojiMock[0].emoji);
+  protected plan_id = input.required<string | null>({ alias: 'id' });
 
   ngOnInit(): void {
     this.telegram.showBackButton('/start');
@@ -42,7 +44,7 @@ export class CreatePlan implements OnInit, OnDestroy {
     this.planF = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(150)]],
       location: ['', [Validators.required, Validators.maxLength(150)]],
-      datetime: ['', Validators.required],
+      datetime: ['', [Validators.required]],
     });
   }
 
@@ -61,6 +63,12 @@ export class CreatePlan implements OnInit, OnDestroy {
         this.routerService.navigate(['/plans']);
       });
     }
+  }
+
+  formatLocalDate(): string {
+    const date = new Date();
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
   ngOnDestroy(): void {

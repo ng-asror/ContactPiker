@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DaysPipe implements PipeTransform {
 
-	transform(day: string, arg?: 'long'): string {
+	transform(day: Date, arg?: 'long'): string {
 		const planDate = new Date(day);
 		const today = new Date();
 
