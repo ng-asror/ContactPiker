@@ -57,7 +57,7 @@ export class PlanDetail implements OnInit, OnDestroy {
         const profile = this.profile.value();
         if (profile) {
           const user = res.plan_users.find((u) => u.user.id === profile.id);
-          this.pending.set(user ? user.status === 'Ожидает ответа' : false);
+          this.pending.set(user ?  ['Ожидает ответа', 'Удален из группы чата'].includes(user.status) : false);
         }
         return res;
       }),
@@ -134,14 +134,28 @@ export class PlanDetail implements OnInit, OnDestroy {
 
   private async getFriends(): Promise<void> {
     const getPlan = this.plan.value();
+    const res = await firstValueFrom(this.friendsService.getFriends());
 
-    if (getPlan) {
-      const plan_users = getPlan.plan_users;
-      const res = await firstValueFrom(this.friendsService.getFriends());
-      this.friends = res.friends.filter(
-        (item) => !plan_users.some((pu) => pu.user.id === item.user.id),
-      );
+    if (!getPlan) {
+      this.friends = res.friends;
+      return;
     }
+
+    const planUsers = getPlan.plan_users ?? [];
+
+    const allowedFromPlanIds = new Set(
+      planUsers
+        .filter((pu) => ['Отклонено', 'Удален из группы чата'].includes(pu.status))
+        .map((pu) => pu.user.id),
+    );
+
+    this.friends = res.friends.filter((friend) => {
+      const inPlan = planUsers.some((pu) => pu.user.id === friend.user.id);
+
+      if (!inPlan) return true;
+
+      return allowedFromPlanIds.has(friend.user.id);
+    });
   }
 
   protected toggleFriends(id: number): void {
