@@ -15,7 +15,6 @@ import { Telegram } from '../../../../core';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { Router } from '@angular/router';
 import { Friends } from '../../../friends/services';
-
 @Component({
   selector: 'app-create-plan',
   imports: [ReactiveFormsModule],
@@ -34,7 +33,7 @@ export class CreatePlan implements OnInit, OnDestroy {
   protected emojiMock = planEmojies;
 
   // Variables
-  protected planF: FormGroup;
+  protected planForm: FormGroup;
   protected loader: boolean = false;
 
   // signals
@@ -52,7 +51,7 @@ export class CreatePlan implements OnInit, OnDestroy {
   }
 
   constructor() {
-    this.planF = this.fb.group({
+    this.planForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(150)]],
       location: ['', [Validators.required, Validators.maxLength(150)]],
       datetime: ['', [Validators.required]],
@@ -66,18 +65,20 @@ export class CreatePlan implements OnInit, OnDestroy {
 
   // create btn
   protected async createPlan(): Promise<void> {
-    this.loader = true;
-    const getFormValue = this.planF.getRawValue();
-    if (this.planF.valid) {
+    const getFormValue = this.planForm.getRawValue();
+    if (this.planForm.valid) {
+      this.loader = true;
       await firstValueFrom(
         this.planService.createPlan({ ...getFormValue, emoji: this.selectEmoji() }),
       ).then((res) => {
         firstValueFrom(
           this.planService.sendFriends(String(res.id), Array.from(this.selectedUserIds)),
         ).then(() => {
-          this.routerService.navigate(['/plans']);
+          this.routerService.navigate(['/plans/', res.id]);
         });
       });
+    } else {
+      this.planForm.markAllAsTouched();
     }
   }
 
