@@ -31,8 +31,8 @@ export class Plan {
     return this.http.post<IApprovedAndYoursPlan>(`${environment.apiUrl}/plans/create/`, data);
   }
 
-  updatePlan(plan_id: string, data: IPlanReq): Observable<void> {
-    return this.http.put<void>(`${environment.apiUrl}/plans/${plan_id}/update/`, data);
+  updatePlan(plan_id: string, data: IPlanReq): Observable<IApprovedAndYoursPlan> {
+    return this.http.put<IApprovedAndYoursPlan>(`${environment.apiUrl}/plans/${plan_id}/update/`, data);
   }
 
   plansList(data: { date?: string; filter_type?: 'new' | 'date' }): Observable<IPlansRes> {
