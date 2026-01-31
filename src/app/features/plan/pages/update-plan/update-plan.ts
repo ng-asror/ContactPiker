@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input, resource, signal } from '@angular/core';
 import { NonNullableFormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first, firstValueFrom } from 'rxjs';
 import { IPopup, Telegram } from '../../../../core';
 import { Plan } from '../../services';
@@ -18,8 +18,9 @@ export class UpdatePlan {
   private planService = inject(Plan);
   private fb = inject(NonNullableFormBuilder);
   private telegram = inject(Telegram);
-  private routerService = inject(Router);
+  private router = inject(Router);
   private friendsService = inject(Friends);
+  private route = inject(ActivatedRoute);
 
   // Mocks
   protected emojiMock = planEmojies;
@@ -54,7 +55,10 @@ export class UpdatePlan {
   });
 
   ngOnInit(): void {
-    this.telegram.showBackButton('/start');
+    this.telegram.BackButton.show();
+    this.telegram.BackButton.onClick(() =>
+      this.router.navigate(['../'], { relativeTo: this.route }),
+    );
   }
 
   formatLocalDate(): string {
@@ -83,7 +87,7 @@ export class UpdatePlan {
       await firstValueFrom(
         this.planService.updatePlan(this.plan_id(), { ...getFormValue, emoji: this.selectEmoji() }),
       ).then(() => {
-        this.routerService.navigate(['/plans']);
+        this.router.navigate(['/plans']);
       });
     }
   }
@@ -98,7 +102,7 @@ export class UpdatePlan {
     this.telegram.tg.showPopup(deletePopup, (buttonId: string) => {
       if (buttonId === 'delete') {
         firstValueFrom(this.planService.deletePlan(this.plan_id())).then(() => {
-          this.routerService.navigateByUrl('/plans');
+          this.router.navigateByUrl('/plans');
         });
       }
     });
@@ -120,6 +124,9 @@ export class UpdatePlan {
   }
 
   ngOnDestroy(): void {
-    this.telegram.hiddeBackButton('/start');
+    this.telegram.BackButton.hide();
+    this.telegram.BackButton.offClick(() =>
+      this.router.navigate(['../'], { relativeTo: this.route }),
+    );
   }
 }
