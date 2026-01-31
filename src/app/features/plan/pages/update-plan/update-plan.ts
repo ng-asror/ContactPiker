@@ -26,7 +26,7 @@ export class UpdatePlan {
   protected emojiMock = planEmojies;
 
   // Variables
-  protected planF: FormGroup;
+  protected planForm: FormGroup;
 
   // signals
   protected selectEmoji = signal<string>(this.emojiMock[0].emoji);
@@ -37,7 +37,7 @@ export class UpdatePlan {
   getPlanUsers = resource({
     loader: () =>
       firstValueFrom(this.planService.getPlan(String(this.plan_id()))).then((res) => {
-        this.planF.setValue({
+        this.planForm.setValue({
           name: res.name,
           location: res.location,
           datetime: String(res.datetime).slice(0, 16),
@@ -68,7 +68,7 @@ export class UpdatePlan {
   }
 
   constructor() {
-    this.planF = this.fb.group({
+    this.planForm = this.fb.group({
       name: [, [Validators.required, Validators.maxLength(150)]],
       location: ['', [Validators.required, Validators.maxLength(150)]],
       datetime: ['', [Validators.required]],
@@ -82,13 +82,18 @@ export class UpdatePlan {
 
   // create btn
   protected async updatePlan(): Promise<void> {
-    const getFormValue = this.planF.getRawValue();
-    if (this.planF.valid) {
+    const planFormValues = this.planForm.getRawValue();
+    if (this.planForm.valid) {
       await firstValueFrom(
-        this.planService.updatePlan(this.plan_id(), { ...getFormValue, emoji: this.selectEmoji() }),
-      ).then(() => {
-        this.router.navigate(['/plans']);
+        this.planService.updatePlan(this.plan_id(), {
+          ...planFormValues,
+          emoji: this.selectEmoji(),
+        }),
+      ).then((res) => {
+        this.router.navigate(['/plans', res.id]);
       });
+    } else {
+      this.planForm.markAllAsTouched();
     }
   }
 
