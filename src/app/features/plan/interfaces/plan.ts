@@ -41,8 +41,6 @@ export interface IPlanReq {
     emoji: string;
     name: string;
     location: string;
-    lat: string;
-    lng: string;
     datetime: string;
 }
 
