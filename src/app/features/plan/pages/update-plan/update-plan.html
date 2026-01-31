@@ -21,7 +21,7 @@
       }
     </ul>
   </div>
-  <form [formGroup]="planF" (ngSubmit)="updatePlan()" class="space-y-[20px]">
+  <form [formGroup]="planForm" (ngSubmit)="updatePlan()" class="space-y-[20px]">
     <div>
       <label class="text-sm font-bold leading-[100%] text-gray-900" for="titleInput"
         >Выбери эмодзи</label
@@ -30,6 +30,9 @@
         type="text"
         id="titleInput"
         formControlName="name"
+        [class.border-red-500]="
+          planForm.controls['name'].invalid && planForm.controls['name'].touched
+        "
         class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
         placeholder="Пицца с Аней"
         required
@@ -42,6 +45,9 @@
         id="kagda"
         formControlName="datetime"
         required
+        [class.border-red-500]="
+          planForm.controls['datetime'].invalid && planForm.controls['datetime'].touched
+        "
         [min]="formatLocalDate()"
         class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
       />
@@ -52,6 +58,9 @@
         type="text"
         id="gde"
         formControlName="location"
+        [class.border-red-500]="
+          planForm.controls['location'].invalid && planForm.controls['location'].touched
+        "
         class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
         placeholder="Додо Пицца, Тверская 10"
         required
