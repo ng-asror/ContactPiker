@@ -1,0 +1,49 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="bg6" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#fa709a;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#fee140;stop-opacity:1"/>
+                        </linearGradient>
+                        <linearGradient id="pink6" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#fc8fb1;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#fa709a;stop-opacity:1"/>
+                        </linearGradient>
+                        <linearGradient id="yellow6" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#fff4b3;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#fee140;stop-opacity:1"/>
+                        </linearGradient>
+                    </defs>
+                    
+                    <rect width="512" height="512" fill="url(#bg6)"/>
+                    
+                    <!-- 3 пересекающихся круга с тенями -->
+                    <!-- Тени -->
+                    <ellipse cx="208" cy="240" rx="95" ry="15" fill="#000" opacity="0.15"/>
+                    <ellipse cx="320" cy="240" rx="95" ry="15" fill="#000" opacity="0.15"/>
+                    <ellipse cx="264" cy="335" rx="95" ry="15" fill="#000" opacity="0.15"/>
+                    
+                    <!-- Круги -->
+                    <circle cx="200" cy="215" r="100" fill="url(#pink6)" opacity="0.85"/>
+                    <circle cx="312" cy="215" r="100" fill="url(#yellow6)" opacity="0.85"/>
+                    <circle cx="256" cy="310" r="100" fill="white" opacity="0.90"/>
+                    
+                    <!-- Белый круг в центре -->
+                    <circle cx="256" cy="245" r="65" fill="white"/>
+                    
+                    <!-- Календарик -->
+                    <rect x="221" y="222" width="70" height="58" rx="8" fill="url(#bg6)"/>
+                    <rect x="221" y="222" width="70" height="18" rx="8" fill="#fa709a"/>
+                    <circle cx="235" cy="231" r="2.5" fill="white"/>
+                    <circle cx="256" cy="231" r="2.5" fill="white"/>
+                    <circle cx="277" cy="231" r="2.5" fill="white"/>
+                    
+                    <circle cx="235" cy="252" r="5" fill="#fa709a" opacity="0.3"/>
+                    <circle cx="256" cy="252" r="5" fill="#fa709a" opacity="0.3"/>
+                    <circle cx="277" cy="252" r="5" fill="#fee140"/>
+                    <circle cx="235" cy="268" r="5" fill="#fa709a" opacity="0.3"/>
+                    
+                    <!-- Текст -->
+                    <text x="256" y="445" font-family="Arial, sans-serif" font-size="50" font-weight="900" fill="white" text-anchor="middle" style="text-shadow: 0 4px 12px rgba(0,0,0,0.25)">
+                        ВМЕСТЕ
+                    </text>
+                </svg>
