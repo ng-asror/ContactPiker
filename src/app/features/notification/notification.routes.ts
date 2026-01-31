@@ -8,7 +8,7 @@ export const notificationRoutes: Routes = [
   },
   {
     path: 'chats/:id',
-    loadComponent:() => import('./pages').then(p => p.Chat),
-    data: {manu: false}
-  }
+    loadComponent: () => import('./pages').then((p) => p.Chat),
+    data: { manu: false },
+  },
 ];
