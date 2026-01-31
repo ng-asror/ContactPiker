@@ -8,9 +8,9 @@ import {
   OnInit,
   resource,
   ViewChild,
+  effect,
 } from '@angular/core';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Notification } from '../../services';
 import { firstValueFrom } from 'rxjs';
@@ -19,6 +19,7 @@ import { DaysPipe } from '../../../plan';
 import { FormsModule } from '@angular/forms';
 import { IMessage } from '../../interfaces';
 import { Message } from '../../components';
+
 @Component({
   selector: 'app-chat',
   imports: [Message, RouterLink, DaysPipe, TextFieldModule, FormsModule],
@@ -30,15 +31,14 @@ export class Chat implements OnInit, OnDestroy {
   private notificationService = inject(Notification);
   private telegramService = inject(Telegram);
   private socketService = inject(Socket);
-  private zone = inject(NgZone);
 
-  // Variables
+  // ===== STATE =====
   protected message: string = '';
 
-  // Inputs
+  // ===== INPUT =====
   room_id = input.required<string>({ alias: 'id' });
 
-  // Resources
+  // ===== RESOURCES =====
   roomResource = resource({
     loader: () => firstValueFrom(this.notificationService.room(this.room_id())),
   });
@@ -50,54 +50,55 @@ export class Chat implements OnInit, OnDestroy {
       ),
   });
 
-  // ViewChilds
-  @ViewChild('messagesContent') messagesContent!: ElementRef<HTMLElement>;
+  // ===== VIEW CHILD =====
+  private _messagesContent?: ElementRef<HTMLElement>;
 
+  @ViewChild('messagesContent')
+  set messagesContent(el: ElementRef<HTMLElement>) {
+    if (!el) return;
+    this._messagesContent = el;
+  }
+
+  // ===== AUTO SCROLL =====
+  private messagesScrollEffect = effect(() => {
+    this.messagesResource.value();
+
+    setTimeout(() => {
+      const el = this._messagesContent?.nativeElement;
+      if (!el) return;
+
+      el.scrollTop = 0;
+    });
+  });
+
+  // ===== LIFECYCLE =====
   async ngOnInit(): Promise<void> {
     this.telegramService.showBackButton('/chats');
 
-    // Socket
-    const token: string | null = await this.telegramService.getCloudStorage('access_token');
+    const token = await this.telegramService.getCloudStorage('access_token');
     this.socketService.initSocket(token, `chat/${this.room_id()}`);
 
-    // listenMessages
     this.listenMessages();
-  }
-
-  // Send message
-  sendMessage(): void {
-    if (this.message.trim().length) {
-      this.socketService.emit('message', this.message.trim());
-      this.message = '';
-    }
-  }
-
-  listenMessages(): void {
-    const sfdds = this.messagesContent.nativeElement;
-    console.log(sfdds.scrollHeight);
-
-    this.socketService.listen<IMessage>('chat_message').subscribe({
-      next: (res: IMessage) => {
-        this.messagesResource.update((messages) =>
-          messages ? [{ ...res }, ...messages] : undefined,
-        );
-
-        // scrollTo
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            const el = this.messagesContent.nativeElement;
-            console.log(el.scrollHeight);
-            el.scrollTo({
-              top: el.scrollHeight,
-              behavior: 'smooth',
-            });
-          });
-        });
-      },
-    });
   }
 
   ngOnDestroy(): void {
     this.telegramService.hiddeBackButton('/chats');
+  }
+
+  // ===== SEND =====
+  sendMessage(): void {
+    if (!this.message.trim()) return;
+
+    this.socketService.emit('message', this.message.trim());
+    this.message = '';
+  }
+
+  // ===== SOCKET =====
+  private listenMessages(): void {
+    this.socketService.listen<IMessage>('chat_message').subscribe({
+      next: (res: IMessage) => {
+        this.messagesResource.update((messages) => (messages ? [{ ...res }, ...messages] : [res]));
+      },
+    });
   }
 }
