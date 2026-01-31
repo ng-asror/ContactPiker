@@ -4,7 +4,7 @@
     <ul class="grid grid-cols-6 gap-[10px] mt-[5px]">
       @for (item of emojiMock; track item.id) {
         <li
-          class="rounded-xl bg-[#F8F9FA] aspect-square content-center cursor-pointer group hover:bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
+          class="rounded-xl bg-gray-100 aspect-square content-center cursor-pointer group hover:bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
           [class.bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]]="
             selectEmoji() === item.emoji
           "
@@ -21,39 +21,57 @@
       }
     </ul>
   </div>
-  <form [formGroup]="planF" (ngSubmit)="createPlan()" class="space-y-[20px]">
+  <form [formGroup]="planForm" (ngSubmit)="createPlan()" class="space-y-[20px]">
+    <!-- Имя/Эмодзи -->
     <div>
-      <label class="text-sm font-bold leading-[100%] text-gray-900" for="titleInput"
-        >Выбери эмодзи</label
-      >
+      <label for="titleInput" class="text-sm font-bold leading-[100%] text-gray-900">
+        Выбери эмодзи
+      </label>
       <input
         type="text"
         id="titleInput"
         formControlName="name"
-        class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
         placeholder="Пицца с Аней"
+        maxlength="250"
+        autocomplete="off"
+        [class.border-red-500]="
+          planForm.controls['name'].invalid && planForm.controls['name'].touched
+        "
+        class="w-full h-[52px] rounded-xl border-2 border-gray-200 px-[15px] outline-none mt-[5px]"
         required
       />
     </div>
+
+    <!-- Дата и время -->
     <div>
-      <label class="text-sm font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
+      <label for="kagda" class="text-sm font-bold leading-[100%] text-gray-900">Когда?</label>
       <input
         type="datetime-local"
         id="kagda"
         formControlName="datetime"
-        required
         [min]="formatLocalDate()"
-        class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
+        [class.border-red-500]="
+          planForm.controls['datetime'].invalid && planForm.controls['datetime'].touched
+        "
+        class="w-full border-2 h-[52px] rounded-xl border-2 border-gray-200 px-[15px] outline-none mt-[5px]"
+        required
       />
     </div>
+
+    <!-- Место -->
     <div>
-      <label class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Где?</label>
+      <label for="gde" class="text-sm font-bold leading-[100%] text-gray-900">Где?</label>
       <input
         type="text"
         id="gde"
         formControlName="location"
-        class="w-full h-[52px] rounded-xl border-2 border-[#E9ECEF] px-[15px] outline-[#FA709A] mt-[5px]"
+        autocomplete="off"
+        maxlength="250"
         placeholder="Додо Пицца, Тверская 10"
+        [class.border-red-500]="
+          planForm.controls['location'].invalid && planForm.controls['location'].touched
+        "
+        class="w-full h-[52px] rounded-xl border-2 border-gray-200 px-[15px] outline-none mt-[5px]"
         required
       />
     </div>
@@ -86,6 +104,7 @@
         </ul>
       </div>
     }
+    <!-- Submit кнопка -->
     @if (!loader) {
       <button
         type="submit"
