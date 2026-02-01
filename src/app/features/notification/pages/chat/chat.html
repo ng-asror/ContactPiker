@@ -2,10 +2,7 @@
 @let messages = messagesResource.value();
 @if (room) {
   <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] bg-gray-100 h-dvh">
-    <a
-      routerLink="plan"
-      class="flex items-center gap-x-[10px] p-[15px] justify-between bg-white"
-    >
+    <a routerLink="plan" class="flex items-center gap-x-[10px] p-[15px] justify-between bg-white">
       <div class="flex items-center gap-x-[10px]">
         <div class="w-[40px] h-[40px] text-center content-center bg-gray-100 rounded-lg text-xl">
           {{ room.plan.emoji }}
@@ -22,20 +19,32 @@
     </a>
     <section
       class="px-[15px] flex flex-col-reverse overflow-y-auto snap-y snap-proximity"
+      [class.empty-bg]="messages && messages.length === 0"
       #messagesContent
     >
-      @for (message of messages; track message.id) {
-        <div class="py-[7.5px] first:pb-[15px] last:pt-[15px] snap-end">
-          @defer (on viewport) {
-            <app-message
-              [data]="message"
-              [position]="message.sender_type === 'initiator' ? 'left' : 'right'"
-            ></app-message>
-          } @loading {
-            <p></p>
-          } @placeholder {
-            <p></p>
-          }
+      @for (message of messages; track $index) {
+        <div class="flex flex-col">
+          <p
+            class="bg-white/90 py-1 block text-center mx-[-15px] text-xs text-gray-900 sticky top-0 z-10 leading-[100%]"
+          >
+            {{ message.date | chatDate }}
+          </p>
+          <div class="w-full">
+            @for (item of message.messages; track item.id) {
+              <div class="py-[7.5px] first:pb-[15px] last:pt-[15px] snap-end">
+                @defer (on viewport) {
+                  <app-message
+                    [data]="item"
+                    [position]="item.sender_type === 'initiator' ? 'left' : 'right'"
+                  ></app-message>
+                } @loading {
+                  <p></p>
+                } @placeholder {
+                  <p></p>
+                }
+              </div>
+            }
+          </div>
         </div>
       }
     </section>
