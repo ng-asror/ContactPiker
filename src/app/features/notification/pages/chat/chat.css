@@ -1,0 +1,6 @@
+.empty-bg {
+    background-image: url('../../../../../../public/svg/empty-chat.svg');
+    background-position: center;
+    background-size: 70%;
+    background-repeat: no-repeat;
+}
