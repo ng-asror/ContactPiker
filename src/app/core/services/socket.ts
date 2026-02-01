@@ -3,97 +3,97 @@ import { Observable } from 'rxjs';
 import { Telegram } from './telegram';
 
 interface WSMessage<T = any> {
-  type: string;
-  data: T;
+	type: string;
+	data: T;
 }
 interface WSIncomingMessage<T = any> {
-   type: string;
-  message: T; 
+	type: string;
+	message: T;
 }
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class Socket {
-  private telegram = inject(Telegram);
-  private ws: WebSocket | null = null;
+	private telegram = inject(Telegram);
+	private ws: WebSocket | null = null;
 
-  /** Socket ulanishini boshlash */
-  initSocket(token: string | null, url: string) {
-    this.ws = new WebSocket(`wss://app.youcarrf.ru/ws/${url}/?token=${token}`);
+	/** Socket ulanishini boshlash */
+	initSocket(token: string | null, url: string) {
 
-    this.ws.onopen = () => {
-      console.log('✅ WS: connected');
-    };
+		this.ws = new WebSocket(`wss://app.youcarrf.ru/ws/${url}/?token=${token}`);
+		this.ws.onopen = () => {
+			console.log('✅ WS: connected');
+		};
 
-    this.ws.onmessage = (event) => {
-      try {
-        const data: WSIncomingMessage = JSON.parse(event.data);
-        console.log('📩 WS message:', data);
-      } catch (err) {
-        console.error('WS parse error', err);
-      }
-    };
+		this.ws.onmessage = (event) => {
+			try {
+				const data: WSIncomingMessage = JSON.parse(event.data);
+				console.log('📩 WS message:', data);
+			} catch (err) {
+				console.error('WS parse error', err);
+			}
+		};
 
-    this.ws.onerror = (err) => {
-      console.error('❌ WS error', err);
-      this.telegram.showAlert('❌ Сигнал: ошибка подключения');
-    };
+		this.ws.onerror = (err) => {
+			console.error('❌ WS error', err);
+			console.error('❌ Сигнал: ошибка подключения');
+		};
 
-    this.ws.onclose = () => {
-      console.warn('⚠️ WS closed');
-      this.telegram.showAlert('⚠️ Сигнал: соединение потеряно');
-    };
-  }
+		this.ws.onclose = () => {
+			console.warn('⚠️ WS closed');
+			console.warn('⚠️ Сигнал: соединение потеряно');
+		};
+	}
 
-  /** Event yuborish (Socket.IO emit analogi) */
-  emit<T>(event: string, data: T): void {
-    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+	/** Event yuborish (Socket.IO emit analogi) */
+	emit<T>(event: string, data: T): void {
+		if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
 
-    this.ws.send(
-      JSON.stringify({
-        message: data,
-      }),
-    );
-  }
+		this.ws.send(
+			JSON.stringify({
+				message: data,
+			}),
+		);
+	}
 
-  /** Event tinglash (Socket.IO on analogi) */
-listen<T>(type: string): Observable<T> {
-  return new Observable<T>((observer) => {
-    if (!this.ws) {
-      console.warn(`WS ulanmagan: "${type}" ni tinglab bo‘lmaydi.`);
-      return;
-    }
+	/** Event tinglash (Socket.IO on analogi) */
+	listen<T>(type: string): Observable<T> {
+		return new Observable<T>((observer) => {
+			if (!this.ws) {
+				console.warn(`WS ulanmagan: "${type}" ni tinglab bo‘lmaydi.`);
+				return;
+			}
 
-    const handler = (e: MessageEvent) => {
-      try {
-        const msg: WSIncomingMessage<T> = JSON.parse(e.data);
+			const handler = (e: MessageEvent) => {
+				try {
+					const msg: WSIncomingMessage<T> = JSON.parse(e.data);
 
-        if (msg.type === type) {
-          observer.next(msg.message);
-        }
-      } catch (err) {
-        console.error('WS parse error:', err);
-      }
-    };
+					if (msg.type === type) {
+						observer.next(msg.message);
+					}
+				} catch (err) {
+					console.error('WS parse error:', err);
+				}
+			};
 
-    this.ws.addEventListener('message', handler);
+			this.ws.addEventListener('message', handler);
 
-    return () => {
-      this.ws?.removeEventListener('message', handler);
-    };
-  });
-}
+			return () => {
+				this.ws?.removeEventListener('message', handler);
+			};
+		});
+	}
 
 
-  /** Socket holatini olish */
-  getSocket(): WebSocket | null {
-    return this.ws;
-  }
+	/** Socket holatini olish */
+	getSocket(): WebSocket | null {
+		return this.ws;
+	}
 
-  /** Ulanishni uzish */
-  disconnect(): void {
-    this.ws?.close();
-    this.ws = null;
-  }
+	/** Ulanishni uzish */
+	disconnect(): void {
+		this.ws?.close();
+		this.ws = null;
+	}
 }
