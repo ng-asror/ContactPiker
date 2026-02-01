@@ -19,10 +19,10 @@ import { DaysPipe } from '../../../plan';
 import { FormsModule } from '@angular/forms';
 import { IMessage } from '../../interfaces';
 import { Message } from '../../components';
-
+import { ChatDatePipe } from '../../pipes';
 @Component({
   selector: 'app-chat',
-  imports: [Message, RouterLink, DaysPipe, TextFieldModule, FormsModule],
+  imports: [Message, RouterLink, DaysPipe, TextFieldModule, FormsModule, ChatDatePipe],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,9 +45,27 @@ export class Chat implements OnInit, OnDestroy {
 
   messagesResource = resource({
     loader: () =>
-      firstValueFrom(this.notificationService.messages(this.room_id())).then((res) =>
-        res.messages.reverse(),
-      ),
+      firstValueFrom(this.notificationService.messages(this.room_id())).then((res) => {
+        const messages = res.messages.reverse();
+
+        const map = new Map<string, IMessage[]>();
+
+        messages.forEach((msg) => {
+          const date = new Date(msg.created_at).toLocaleDateString('ru-RU');
+
+          if (!map.has(date)) {
+            map.set(date, []);
+          }
+
+          map.get(date)!.unshift(msg);
+        });
+        return (
+          Array.from(map.entries()).map(([date, messages]) => ({
+            date,
+            messages,
+          })) ?? null
+        );
+      }),
   });
 
   // ===== VIEW CHILD =====
@@ -97,7 +115,34 @@ export class Chat implements OnInit, OnDestroy {
   private listenMessages(): void {
     this.socketService.listen<IMessage>('chat_message').subscribe({
       next: (res: IMessage) => {
-        this.messagesResource.update((messages) => (messages ? [{ ...res }, ...messages] : [res]));
+        this.messagesResource.update((groups) => {
+          const msgDate = new Date(res.created_at).toLocaleDateString('ru-RU');
+
+          if (!groups || groups.length === 0) {
+            return [
+              {
+                date: msgDate,
+                messages: [res],
+              },
+            ];
+          }
+
+          const todayGroup = groups.find((g) => g.date === msgDate);
+
+          if (todayGroup) {
+            return groups.map((g) =>
+              g.date === msgDate ? { ...g, messages: [...g.messages, res] } : g,
+            );
+          }
+
+          return [
+            {
+              messages: [res],
+              date: msgDate,
+            },
+            ...groups,
+          ];
+        });
       },
     });
   }
