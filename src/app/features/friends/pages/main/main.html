@@ -4,7 +4,7 @@
     placeholder="Поиск..." #searchInput (input)="search(searchInput.value.trim().toLocaleLowerCase())"
     class="w-full h-[52px] border-2 border-[#E9ECEF] px-[15px] rounded-xl outline-[#F5576C]"
   />
-  @if (friendsList()) {
+  @if (friendsList() && !friends.isLoading()) {
     <h1 class="text-lg font-bold leading-[100%] text-gray-900">
       Все друзья ({{ friendsList().length }})
     </h1>
@@ -24,6 +24,15 @@
           </div>
         </div>
       }
+    </div>
+  }
+  @if (friends.isLoading()) {
+    <div class="w-2/5 h-[18px] rounded-full animate-pulse bg-gray-200"></div>
+    <div class="space-y-[12px]">
+      <div class="bg-gray-200 animate-pulse rounded-2xl w-full h-[80px]"></div>
+      <div class="bg-gray-200 animate-pulse rounded-2xl w-full h-[80px]"></div>
+      <div class="bg-gray-200 animate-pulse rounded-2xl w-full h-[80px]"></div>
+      <div class="bg-gray-200 animate-pulse rounded-2xl w-full h-[80px]"></div>
     </div>
   }
   <a
