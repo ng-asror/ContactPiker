@@ -1,5 +1,8 @@
 @let roomsValue = rooms.value();
-<div class="w-full h-dvh overflow-y-auto pb-[90px] py-[15px]">
+<div
+  class="w-full h-dvh overflow-y-auto pb-[90px] py-[15px]"
+  [class.empty]="roomsValue && !roomsValue.length"
+>
   <div class="divide-y-1 divide-gray-200">
     @for (room of roomsValue; track room.id) {
       <a
