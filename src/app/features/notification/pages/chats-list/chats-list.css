@@ -1,0 +1,6 @@
+.empty {
+  background-image: url('../../../../../../public/svg/empty-messages.svg');
+  background-position: center;
+  background-size: 70%;
+  background-repeat: no-repeat;
+}
