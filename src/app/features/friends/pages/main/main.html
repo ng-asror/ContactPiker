@@ -1,7 +1,9 @@
 <div class="p-[15px] space-y-[20px] overflow-y-auto h-dvh pb-[75px]">
   <input
     type="search"
-    placeholder="Поиск..." #searchInput (input)="search(searchInput.value.trim().toLocaleLowerCase())"
+    placeholder="Поиск..."
+    #searchInput
+    (input)="search(searchInput.value.trim().toLocaleLowerCase())"
     class="w-full h-[52px] border-2 border-[#E9ECEF] px-[15px] rounded-xl outline-[#F5576C]"
   />
   @if (friendsList() && !friends.isLoading()) {
@@ -12,7 +14,11 @@
       @for (item of friendsList(); track item.user.id) {
         <div class="rounded-2xl p-[15px] bg-gray-100 flex items-center justify-between">
           <div class="flex items-center gap-x-[15px]">
-            <img [src]="item.user.avatar" alt="" class="w-[40px] h-[40px] rounded-full shrink-[0]" />
+            <img
+              [src]="item.user.avatar"
+              alt=""
+              class="w-[40px] h-[40px] rounded-full shrink-[0]"
+            />
             <b class="text-base font-bold leading-[100%] text-gray-900"
               >{{ item.user.first_name }} {{ item.user.last_name }}</b
             >
@@ -20,11 +26,16 @@
           <div
             class="bg-[linear-gradient(111deg,#F093FB_0%,#F5576C_100%)] leading-[100%] text-xs font-bold text-white p-[6px_12px] rounded-full"
           >
-            {{item.plans_count}} плана
+            {{ item.plans_count }} плана
           </div>
         </div>
       }
     </div>
+    <a
+      routerLink="/start"
+      class="sticky bottom-0 bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full block content-center text-center h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
+      >+ Пригласить друга</a
+    >
   }
   @if (friends.isLoading()) {
     <div class="w-2/5 h-[18px] rounded-full animate-pulse bg-gray-200"></div>
@@ -35,10 +46,5 @@
       <div class="bg-gray-200 animate-pulse rounded-2xl w-full h-[80px]"></div>
     </div>
   }
-  <a
-    routerLink="/start"
-    class="sticky bottom-0 bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)] text-white w-full block content-center text-center h-[48px] rounded-full font-bold text-base leading-[100%] cursor-pointer"
-    >+ Пригласить друга</a
-  >
 </div>
 <!-- <img src="svg/empty-list.svg" alt="empty-list" fetchpriority="high" loading="eager" class="w-full h-auto block"> -->
