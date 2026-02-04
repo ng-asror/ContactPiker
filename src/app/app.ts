@@ -16,7 +16,7 @@ import {
 } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
 import { Account, Socket, Telegram } from './core';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Plan } from './features/plan';
 
 @Component({
