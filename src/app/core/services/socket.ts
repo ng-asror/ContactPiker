@@ -1,99 +1,134 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Telegram } from './telegram';
+import { IMessage, IMessagesRes } from '../../features/notification/interfaces';
+import { INotification } from '../interfaces';
 
+/** WSga yuboriladigan xabar */
 interface WSMessage<T = any> {
-	type: string;
-	data: T;
+  type: string;
+  data: T;
 }
-interface WSIncomingMessage<T = any> {
-	type: string;
-	message: T;
+
+/** WSdan keladigan xabar bazasi */
+interface WSIncomingMessageBase {
+  type: string;
 }
+
+/** Generic xabar tipi: K = key nomi, T = qiymat tipi */
+type WSIncomingMessage<K extends string, T> = WSIncomingMessageBase & {
+  [key in K]: T;
+};
 
 @Injectable({
-	providedIn: 'root',
+  providedIn: 'root',
 })
 export class Socket {
-	private telegram = inject(Telegram);
-	private ws: WebSocket | null = null;
+  private telegram = inject(Telegram);
+  private ws: WebSocket | null = null;
 
-	/** Socket ulanishini boshlash */
-	initSocket(token: string | null, url: string) {
+  /** Socket ulanishini boshlash */
+  initSocket(token: string | null, url: string) {
+    this.ws = new WebSocket(`wss://app.youcarrf.ru/ws/${url}/?token=${token}`);
+    this.ws.onopen = () => {
+      console.log('✅ WS: connected');
+    };
 
-		this.ws = new WebSocket(`wss://app.youcarrf.ru/ws/${url}/?token=${token}`);
-		this.ws.onopen = () => {
-			console.log('✅ WS: connected');
-		};
+    this.ws.onmessage = (event) => {
+      try {
+        const data: any = JSON.parse(event.data);
+        console.log('📩 WS message:', data);
+      } catch (err) {
+        console.error('WS parse error', err);
+      }
+    };
 
-		this.ws.onmessage = (event) => {
-			try {
-				const data: WSIncomingMessage = JSON.parse(event.data);
-				console.log('📩 WS message:', data);
-			} catch (err) {
-				console.error('WS parse error', err);
-			}
-		};
+    this.ws.onerror = (err) => {
+      console.error('❌ WS error', err);
+      console.error('❌ Сигнал: ошибка подключения');
+    };
 
-		this.ws.onerror = (err) => {
-			console.error('❌ WS error', err);
-			console.error('❌ Сигнал: ошибка подключения');
-		};
+    this.ws.onclose = () => {
+      console.warn('⚠️ WS closed');
+      console.warn('⚠️ Сигнал: соединение потеряно');
+    };
+  }
 
-		this.ws.onclose = () => {
-			console.warn('⚠️ WS closed');
-			console.warn('⚠️ Сигнал: соединение потеряно');
-		};
-	}
+  /** Event yuborish (Socket.IO emit analogi) */
+  emit<T>(event: string, data: T): void {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
 
-	/** Event yuborish (Socket.IO emit analogi) */
-	emit<T>(event: string, data: T): void {
-		if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+    this.ws.send(
+      JSON.stringify({
+        message: data,
+      }),
+    );
+  }
 
-		this.ws.send(
-			JSON.stringify({
-				message: data,
-			}),
-		);
-	}
+  /** Message xabarlarini tinglash */
+  listenMessage(): Observable<IMessage> {
+    return new Observable<IMessage>((observer) => {
+      if (!this.ws) {
+        console.warn(`WS ulanmagan: "message" ni tinglab bo‘lmaydi.`);
+        return;
+      }
 
-	/** Event tinglash (Socket.IO on analogi) */
-	listen<T>(type: string): Observable<T> {
-		return new Observable<T>((observer) => {
-			if (!this.ws) {
-				console.warn(`WS ulanmagan: "${type}" ni tinglab bo‘lmaydi.`);
-				return;
-			}
+      const handler = (e: MessageEvent) => {
+        try {
+          const msg: WSIncomingMessage<'message', IMessage> = JSON.parse(e.data);
+          if (msg.type === 'chat_message') {
+            observer.next(msg.message);
+          }
+        } catch (err) {
+          console.error('WS parse error:', err);
+        }
+      };
 
-			const handler = (e: MessageEvent) => {
-				try {
-					const msg: WSIncomingMessage<T> = JSON.parse(e.data);
+      this.ws.addEventListener('message', handler);
 
-					if (msg.type === type) {
-						observer.next(msg.message);
-					}
-				} catch (err) {
-					console.error('WS parse error:', err);
-				}
-			};
+      return () => {
+        this.ws?.removeEventListener('message', handler);
+      };
+    });
+  }
 
-			this.ws.addEventListener('message', handler);
+  /** Notification xabarlarini tinglash */
+  listenNotification(): Observable<INotification> {
+    return new Observable<INotification>((observer) => {
+      if (!this.ws) {
+        console.warn(`WS ulanmagan: "notification" ni tinglab bo‘lmaydi.`);
+        return;
+      }
 
-			return () => {
-				this.ws?.removeEventListener('message', handler);
-			};
-		});
-	}
+      const handler = (e: MessageEvent) => {
+        try {
+          const msg: WSIncomingMessage<'notification', INotification> = JSON.parse(e.data);
+          console.log(msg.type);
 
+          if (msg.type === 'notification') {
+            observer.next(msg.notification);
+          }
+        } catch (err) {
+          console.error('WS parse error:', err);
+        }
+      };
 
-	/** Socket holatini olish */
-	getSocket(): WebSocket | null {
-		return this.ws;
-	}
+      this.ws.addEventListener('message', handler);
 
-	/** Ulanishni uzish */
-	disconnect(): void {
-		this.ws?.close();
-		this.ws = null;
-	}
+      return () => {
+        this.ws?.removeEventListener('message', handler);
+      };
+    });
+  }
+
+  /** Socket holatini olish */
+  getSocket(): WebSocket | null {
+    return this.ws;
+  }
+
+  /** Ulanishni uzish */
+  disconnect(): void {
+    this.ws?.close();
+    this.ws = null;
+  }
 }
