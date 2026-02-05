@@ -112,19 +112,26 @@
     <div class="loader mx-auto"></div>
   </div>
 }
-@if (notification(); as notif) {
+@let notif = notification();
+@if (notif) {
   <div
-    class="fixed top-[15px] inset-x-[15px] bg-white border-1 border-gray-200 rounded-xl p-[15px]"
+    [class.show]="notif"
+    class="fixed top-[15px] inset-x-[15px] bg-white border-1 border-gray-200 rounded-xl p-[15px] z-10"
   >
     <button
+      (click)="notification.set(null)"
       type="button"
       class="w-[25px] h-[25px] rounded-full bg-gray-100 text-gray-500 leading-[100%] cursor-pointer text-center content-center absolute top-[10px] right-[10px]"
     >
       ×
     </button>
-    <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-sm leading-[110%] block">{{
-      notif.notification.title
-    }}</b>
-    <p class="block mt-1 text-sm text-gray-500">{{ notif.notification.message }}</p>
+    <a [routerLink]="['/chats', notif.data.plan_id]" class="block" (click)="notification.set(null)">
+      <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-sm leading-[110%] block">{{
+        notif.title
+      }}</b>
+      <p [routerLink]="['/chats', notif.data.plan_id]" class="block mt-1 text-sm text-gray-500">
+        {{ notif.message }}
+      </p>
+    </a>
   </div>
 }

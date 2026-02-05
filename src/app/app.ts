@@ -15,7 +15,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
-import { Account, INotificationWrapper, Socket, Telegram } from './core';
+import { Account, INotification, Socket, Telegram } from './core';
 import { AsyncPipe } from '@angular/common';
 import { Plan } from './features/plan';
 
@@ -36,11 +36,15 @@ export class App implements OnInit {
 
   // SIGNALS
   loader = signal<boolean>(false);
-  notification = signal<INotificationWrapper | null>(null);
+  notification = signal<INotification | null>(null);
   show_menu = signal<boolean>(true);
 
   // Subjects
   profile$ = this.accountService.profile$;
+
+  // Variables
+  private notificationTimeout: any;
+  private audio = new Audio('sounds/notification-alert-toast.mp3');
 
   constructor() {
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
@@ -72,11 +76,26 @@ export class App implements OnInit {
 
     // Socket
     this.socketService.initSocket(token!, 'notifications');
-    this.socketService.listen<INotificationWrapper>('notification').subscribe((res) => {
-      this.notification.set(res);
-      setTimeout(() => {
-        this.notification.set(null)
-      }, 2000)
+    this.notificationInit();
+  }
+
+  private notificationInit(): void {
+    this.socketService.listenNotification().subscribe({
+      next: (res) => {
+        this.notification.set(res);
+
+        this.audio.volume = 1;
+        this.audio.play().catch((err) => console.warn('Audio playback blocked:', err));
+
+        if (this.notificationTimeout) {
+          clearTimeout(this.notificationTimeout);
+        }
+
+        this.notificationTimeout = setTimeout(() => {
+          this.notification.set(null);
+          this.notificationTimeout = null;
+        }, 3000);
+      },
     });
   }
 
