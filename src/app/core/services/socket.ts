@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Telegram } from './telegram';
 import { IMessage, IMessagesRes } from '../../features/notification/interfaces';
 import { INotification } from '../interfaces';
@@ -26,7 +26,9 @@ type WSIncomingMessage<K extends string, T> = WSIncomingMessageBase & {
 export class Socket {
   private telegram = inject(Telegram);
   private ws: WebSocket | null = null;
-
+  chatIdSubject = new BehaviorSubject<number | null>(null);
+  chatId$ = this.chatIdSubject.asObservable();
+  
   /** Socket ulanishini boshlash */
   initSocket(token: string | null, url: string) {
     this.ws = new WebSocket(`wss://app.youcarrf.ru/ws/${url}/?token=${token}`);
