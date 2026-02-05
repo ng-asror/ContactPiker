@@ -107,8 +107,24 @@
     </div>
   }
 </dialog>
-@if(loader()) {
+@if (loader()) {
   <div class="fixed z-11 bg-white/90 inset-0 content-center">
     <div class="loader mx-auto"></div>
+  </div>
+}
+@if (notification(); as notif) {
+  <div
+    class="fixed top-[15px] inset-x-[15px] bg-white border-1 border-gray-200 rounded-xl p-[15px]"
+  >
+    <button
+      type="button"
+      class="w-[25px] h-[25px] rounded-full bg-gray-100 text-gray-500 leading-[100%] cursor-pointer text-center content-center absolute top-[10px] right-[10px]"
+    >
+      ×
+    </button>
+    <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-sm leading-[110%] block">{{
+      notif.notification.title
+    }}</b>
+    <p class="block mt-1 text-sm text-gray-500">{{ notif.notification.message }}</p>
   </div>
 }
