@@ -8,10 +8,10 @@
           {{ room.plan.emoji }}
         </div>
         <div>
-          <b class="text-sm text-gray-900 leading-[100%] font-semibold ellipsis">{{
+          <b class="text-base text-gray-900 leading-[100%] font-semibold ellipsis">{{
             room.plan.name
           }}</b>
-          <p class="block mt-[4px] ellipsis text-xs text-gray-500 leading-[100%]">
+          <p class="block mt-[4px] ellipsis text-sm text-gray-500 leading-[100%]">
             {{ room.plan.datetime | day }} • {{ room.plan.location }}
           </p>
         </div>
@@ -100,14 +100,14 @@
           cdkAutosizeMinRows="1"
           placeholder="Написать сообщение..."
           cdkAutosizeMaxRows="5"
-          class="w-full resize-none outline-none placeholder:text-black/50 bg-transparent"
+          class="w-full min-h-[30px] resize-none text-base outline-none placeholder:text-black/50 bg-transparent"
         ></textarea>
       </label>
       <button
         [disabled]="!message.trim().length"
         (click)="sendMessage()"
         type="button"
-        class="flex-none cursor-pointer rounded-xl w-[40px] h-[40px] shrink-[0] content-center text-center leading-1 bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
+        class="flex-none cursor-pointer rounded-xl w-[50px] h-[50px] shrink-[0] content-center text-center leading-1 bg-[linear-gradient(135deg,#FA709A_0%,#FEE140_100%)]"
         [class.opacity-50]="!message.trim().length"
       >
         <img src="svg/send.svg" alt="send.svg" width="25" height="25" class="block mx-auto" />

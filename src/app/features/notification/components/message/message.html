@@ -9,18 +9,18 @@
     class="rounded-full block shrink-[0]"
     fetchpriority="low"
     loading="lazy"
-    width="32"
-    height="32"
+    width="40"
+    height="40"
   />
   <div>
     <p
-      class="block p-[10px] mb-[4px] break-all wrap-break-word rounded-xl text-sm text-gray-900 leading-[19px] font-normal bg-white"
+      class="block p-[10px] mb-[4px] break-all wrap-break-word rounded-xl text-base text-gray-900 leading-[19px] font-normal bg-white"
       [class.bg-[linear-gradient(101deg,#FA709A_0%,#FEE140_100%)]]="type() === 'left'" [class.text-white]="type() === 'left'"
     >
       {{ message().message }}
     </p>
     <span
-      class="text-gray-400 text-[11px] block leading-[100%]"
+      class="text-gray-400 text-xs block leading-[100%]"
       [class.text-end]="type() === 'left'"
       >{{ message().created_at | date: 'HH:mm' }}</span
     >
