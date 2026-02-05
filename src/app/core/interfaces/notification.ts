@@ -7,7 +7,7 @@ export interface INotificationData {
 
 export interface INotification {
   id: number;
-  notification_type: 'chat_message' | string; // kelajakda boshqa turlar ham bo‘lishi mumkin
+  notification_type: 'chat_message';
   title: string;
   message: string;
   data: INotificationData;

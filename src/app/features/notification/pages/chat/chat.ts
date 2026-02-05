@@ -9,6 +9,8 @@ import {
   resource,
   ViewChild,
   effect,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { RouterLink } from '@angular/router';
@@ -46,7 +48,7 @@ export class Chat implements OnInit, OnDestroy {
   messagesResource = resource({
     loader: () =>
       firstValueFrom(this.notificationService.messages(this.room_id())).then((res) => {
-        const messages = res.messages.reverse();
+        const messages = res.messages;
 
         const map = new Map<string, IMessage[]>();
 
@@ -60,16 +62,20 @@ export class Chat implements OnInit, OnDestroy {
           map.get(date)!.unshift(msg);
         });
         return (
-          Array.from(map.entries()).map(([date, messages]) => ({
-            date,
-            messages,
-          })) ?? null
+          Array.from(map.entries())
+            .map(([date, messages]) => ({
+              date,
+              messages,
+            }))
+            .reverse() ?? null
         );
       }),
   });
 
   // ===== VIEW CHILD =====
   private _messagesContent?: ElementRef<HTMLElement>;
+  @ViewChild('chatCanvas') chatContent!: ElementRef<HTMLDivElement>;
+  @ViewChildren('lastMsg') lastMsg!: QueryList<ElementRef>;
 
   @ViewChild('messagesContent')
   set messagesContent(el: ElementRef<HTMLElement>) {
@@ -96,6 +102,7 @@ export class Chat implements OnInit, OnDestroy {
     const token = await this.telegramService.getCloudStorage('access_token');
     this.socketService.initSocket(token, `chat/${this.room_id()}`);
 
+    // socket
     this.listenMessages();
   }
 
@@ -113,7 +120,7 @@ export class Chat implements OnInit, OnDestroy {
 
   // ===== SOCKET =====
   private listenMessages(): void {
-    this.socketService.listen<IMessage>('chat_message').subscribe({
+    this.socketService.listenMessage().subscribe({
       next: (res: IMessage) => {
         this.messagesResource.update((groups) => {
           const msgDate = new Date(res.created_at).toLocaleDateString('ru-RU');
@@ -131,7 +138,7 @@ export class Chat implements OnInit, OnDestroy {
 
           if (todayGroup) {
             return groups.map((g) =>
-              g.date === msgDate ? { ...g, messages: [...g.messages, res] } : g,
+              g.date === msgDate ? { ...g, messages: [res, ...g.messages] } : g,
             );
           }
 
@@ -145,5 +152,25 @@ export class Chat implements OnInit, OnDestroy {
         });
       },
     });
+  }
+
+  ngAfterViewInit(): void {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // if (entry.isIntersecting && this.chat_page < this.last_page()) {
+          //   this.chat_loading.set(true);
+          //   this.chat_page++;
+          //   this.getChats(this.chat_page);
+          // }
+        });
+      },
+      { threshold: 0.1 },
+    );
+
+    // this.lastMsg.changes.subscribe((list) => {
+    //   const last = list.last?.nativeElement;
+    //   if (last) observer.observe(last);
+    // });
   }
 }
