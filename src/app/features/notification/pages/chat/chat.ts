@@ -9,8 +9,6 @@ import {
   resource,
   ViewChild,
   effect,
-  QueryList,
-  ViewChildren,
 } from '@angular/core';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { RouterLink } from '@angular/router';
@@ -45,6 +43,7 @@ export class Chat implements OnInit, OnDestroy {
     loader: () => firstValueFrom(this.notificationService.room(this.room_id())),
   });
 
+
   messagesResource = resource({
     loader: () =>
       firstValueFrom(this.notificationService.messages(this.room_id())).then((res) => {
@@ -62,20 +61,16 @@ export class Chat implements OnInit, OnDestroy {
           map.get(date)!.unshift(msg);
         });
         return (
-          Array.from(map.entries())
-            .map(([date, messages]) => ({
-              date,
-              messages,
-            }))
-            .reverse() ?? null
+          Array.from(map.entries()).map(([date, messages]) => ({
+            date,
+            messages,
+          })) ?? null
         );
       }),
   });
 
   // ===== VIEW CHILD =====
   private _messagesContent?: ElementRef<HTMLElement>;
-  @ViewChild('chatCanvas') chatContent!: ElementRef<HTMLDivElement>;
-  @ViewChildren('lastMsg') lastMsg!: QueryList<ElementRef>;
 
   @ViewChild('messagesContent')
   set messagesContent(el: ElementRef<HTMLElement>) {
@@ -152,25 +147,5 @@ export class Chat implements OnInit, OnDestroy {
         });
       },
     });
-  }
-
-  ngAfterViewInit(): void {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // if (entry.isIntersecting && this.chat_page < this.last_page()) {
-          //   this.chat_loading.set(true);
-          //   this.chat_page++;
-          //   this.getChats(this.chat_page);
-          // }
-        });
-      },
-      { threshold: 0.1 },
-    );
-
-    // this.lastMsg.changes.subscribe((list) => {
-    //   const last = list.last?.nativeElement;
-    //   if (last) observer.observe(last);
-    // });
   }
 }

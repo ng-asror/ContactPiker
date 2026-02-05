@@ -1,29 +1,34 @@
-@let roomsValue = rooms.value();
+@let notifs = getNotifs.value();
 <div
   class="w-full h-dvh overflow-y-auto pb-[90px] py-[15px]"
-  [class.empty]="roomsValue && !roomsValue.length"
+  [class.empty]="notifs && !notifs.length"
 >
   <div class="divide-y-1 divide-gray-200">
-    @if (!rooms.isLoading()) {
-      @for (room of roomsValue; track room.id) {
-        <a
-          [routerLink]="room.id.toString()"
-          class="group flex items-center gap-x-[10px] px-[15px] py-1 hover:bg-gray-100"
+    @if (!getNotifs.isLoading()) {
+      @for (item of notifs; track item.id) {
+        <div
+          (click)="readNotif(item.id.toString(), item.data.room_id.toString())"
+          class="group flex items-stretch gap-x-[10px] px-[15px] py-2 hover:bg-gray-100"
         >
-          <div
-            class="w-[50px] h-[50px] text-center content-center group-hover:bg-gray-200 bg-gray-100 rounded-xl text-2xl"
-          >
-            {{ room.plan.emoji }}
-          </div>
           <div>
-            <b class="text-base text-gray-900 leading-[100%] font-semibold ellipsis">{{
-              room.plan.name
+            <b class="text-base ellipsis text-gray-900 leading-[100%] font-semibold ellipsis">{{
+              item.title
             }}</b>
             <p class="block mt-[4px] ellipsis text-sm text-gray-500 leading-[100%]">
-              {{ room.plan.datetime | day }} • {{ room.plan.location }}
+              {{ item.message }}
             </p>
           </div>
-        </a>
+          <div class="shrink-[0] content-between">
+            <p class="block text-xs text-gray-500">{{ item.created_at | day }}</p>
+            <p
+              class="block text-xs text-end"
+              [class.text-blue-500]="item.is_read"
+              [class.text-gray-500]="!item.is_read"
+            >
+              {{ item.is_read ? '✓✓' : '✓' }}
+            </p>
+          </div>
+        </div>
       }
     } @else {
       <div class="w-full px-[15px] h-[48px] flex items-center gap-x-[10px]">

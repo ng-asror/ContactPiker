@@ -12,7 +12,7 @@ export interface INotification {
   message: string;
   data: INotificationData;
   is_read: boolean;
-  created_at: string; // yoki Date, agar parse qilsangiz
+  created_at: Date;
 }
 
 export interface INotificationWrapper {
