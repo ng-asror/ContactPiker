@@ -125,13 +125,18 @@
     >
       ×
     </button>
-    <a [routerLink]="['/chats', notif.data.plan_id]" class="block" (click)="notification.set(null)">
+    <div
+      class="block cursor-pointer"
+      (click)="
+        notification.set(null); readNotif(notif.id.toString(), notif.data.room_id.toString())
+      "
+    >
       <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-sm leading-[110%] block">{{
         notif.title
       }}</b>
       <p [routerLink]="['/chats', notif.data.plan_id]" class="block mt-1 text-sm text-gray-500">
         {{ notif.message }}
       </p>
-    </a>
+    </div>
   </div>
 }
