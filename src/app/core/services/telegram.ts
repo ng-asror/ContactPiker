@@ -126,8 +126,6 @@ export class Telegram {
   }
 
   shareData(shareTxt: string): void {
-    console.log(typeof this.tg.shareData());
-
     this.tg.shareData({ text: shareTxt });
   }
 }
