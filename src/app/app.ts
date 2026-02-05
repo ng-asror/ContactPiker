@@ -15,8 +15,8 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
-import { Account, Socket, Telegram } from './core';
-import { AsyncPipe, NgClass } from '@angular/common';
+import { Account, INotificationWrapper, Socket, Telegram } from './core';
+import { AsyncPipe } from '@angular/common';
 import { Plan } from './features/plan';
 
 @Component({
@@ -36,6 +36,7 @@ export class App implements OnInit {
 
   // SIGNALS
   loader = signal<boolean>(false);
+  notification = signal<INotificationWrapper | null>(null);
   show_menu = signal<boolean>(true);
 
   // Subjects
@@ -45,7 +46,7 @@ export class App implements OnInit {
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
       const active = this.getChild(this.activatedRoute);
       const menubar = active.snapshot.data['menu'];
-      this.show_menu.set(menubar ?? true);
+      this.show_menu.set(menubar ?? false);
     });
   }
   async ngOnInit(): Promise<void> {
@@ -71,6 +72,12 @@ export class App implements OnInit {
 
     // Socket
     this.socketService.initSocket(token!, 'notifications');
+    this.socketService.listen<INotificationWrapper>('notification').subscribe((res) => {
+      this.notification.set(res);
+      setTimeout(() => {
+        this.notification.set(null)
+      }, 2000)
+    });
   }
 
   private async login(startParams: string | null): Promise<void> {
