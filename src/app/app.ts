@@ -16,6 +16,7 @@ import {
 } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
 import { Account, INotification, Socket, Telegram } from './core';
+import {Notification } from './features/notification'
 import { AsyncPipe } from '@angular/common';
 import { Plan } from './features/plan';
 
@@ -33,6 +34,7 @@ export class App implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private telegram = inject(Telegram);
   private accountService = inject(Account);
+  private notifService = inject(Notification);
 
   // SIGNALS
   loader = signal<boolean>(false);
@@ -80,8 +82,11 @@ export class App implements OnInit {
   }
 
   private notificationInit(): void {
+    let room_id: number | null = null;
+    this.socketService.chatId$.subscribe((res) => (room_id = res));
     this.socketService.listenNotification().subscribe({
       next: (res) => {
+        if (res.data.room_id === room_id) return;
         this.notification.set(res);
 
         this.audio.volume = 1;
@@ -138,5 +143,11 @@ export class App implements OnInit {
         element.blur();
       });
     }
+  }
+
+  protected async readNotif(notif_id: string, room_id: string): Promise<void> {
+    await firstValueFrom(this.notifService.read(notif_id)).then(() => {
+      this.router.navigate(['chats', room_id]);
+    });
   }
 }
