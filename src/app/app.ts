@@ -16,7 +16,7 @@ import {
 } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
 import { Account, INotification, Socket, Telegram } from './core';
-import {Notification } from './features/notification'
+import { Notification } from './features/notification';
 import { AsyncPipe } from '@angular/common';
 import { Plan } from './features/plan';
 
@@ -56,16 +56,12 @@ export class App implements OnInit {
     });
   }
   async ngOnInit(): Promise<void> {
-    
     this.telegram.init('#fee140');
     let token: string | null = await this.telegram.getCloudStorage('access_token');
 
     // start params
     const startParams = (await this.telegram.getTgUser()).start_param;
-
-    if (startParams) {
-      this.loader.set(true);
-    }
+    startParams ? this.loader.set(false) : this.loader.set(true);
 
     if (!token) {
       await this.login(startParams);
@@ -129,9 +125,13 @@ export class App implements OnInit {
   }
 
   async getPlan(invite_token: string): Promise<void> {
-    await firstValueFrom(this.planService.getPlanForToken(invite_token)).then((res) => {
-      this.router.navigateByUrl(`plans/${res.plan.id}`).finally(() => this.loader.set(false));
-    });
+    await firstValueFrom(this.planService.getPlanForToken(invite_token))
+      .then((res) => {
+        this.router.navigateByUrl(`plans/${res.plan.id}`).finally(() => this.loader.set(false));
+      })
+      .finally(() => {
+        this.loader.set(false);
+      });
   }
 
   @HostListener('document:click', ['$event'])

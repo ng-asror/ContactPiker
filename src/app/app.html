@@ -1,142 +1,144 @@
-<router-outlet />
-<div
-  class="fixed z-10 inset-x-0 bottom-0 transition-transform duration-300 ease-in-out"
-  [class.translate-y-0]="show_menu()"
-  [class.translate-y-[100px]]="!show_menu()"
->
-  <menu class="flex items-stratch w-full h-[70px] bg-white border-t-1 border-gray-200">
-    <li
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
-      routerLink="/plans"
-      routerLinkActive="text-gray-900 font-semibold"
-      [class.!text-gray-500]="profileModal.open"
-      [class.!font-normal]="profileModal.open"
-    >
-      <img
-        src="imgs/kalendar.png"
-        alt="kalendar.png"
-        fetchpriority="high"
-        loading="eager"
-        width="21"
-        height="21"
-      />
-      Планы
-    </li>
-    <li
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
-      routerLink="/friends"
-      routerLinkActive="text-gray-900 font-semibold"
-      [class.!text-gray-500]="profileModal.open"
-      [class.!font-normal]="profileModal.open"
-    >
-      <img
-        src="imgs/friends.png"
-        alt="friends.png"
-        fetchpriority="high"
-        loading="eager"
-        width="24"
-        height="24"
-      />
-      Друзья
-    </li>
-    <li
-      routerLink="/start"
-      class="leading-1 w-[50px] h-[50px] mt-[-15px] cursor-pointer bg-[linear-gradient(135deg,#F093FB_0%,#F5576C_100%)] text-center content-center rounded-full text-white text-xl"
-    >
-      +
-    </li>
-    <li
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
-      routerLink="/chats"
-      routerLinkActive="text-gray-900 font-semibold"
-      [class.!text-gray-500]="profileModal.open"
-      [class.!font-normal]="profileModal.open"
-    >
-      <img
-        src="imgs/bell.png"
-        alt="bell.png"
-        fetchpriority="high"
-        loading="eager"
-        width="21"
-        height="21"
-      />
-      Алерты
-    </li>
-    <li
-      (click)="profileModal.showModal()"
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
-      [class.text-gray-900]="profileModal.open"
-      [class.font-semibold]="profileModal.open"
-    >
-      <img
-        src="imgs/profile.png"
-        alt="profile.png"
-        fetchpriority="high"
-        loading="eager"
-        width="21"
-        height="21"
-      />
-      Профиль
-    </li>
-  </menu>
-</div>
-@let me = profile$ | async;
-<dialog
-  #profileModal
-  class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[320px] rounded-xl p-[15px]"
->
-  <button
-    class="w-[25px] h-[25px] rounded-full bg-gray-100 text-gray-500 leading-1 cursor-pointer text-center content-center absolute top-[10px] right-[10px]"
-    type="button"
-    (click)="profileModal.close()"
-  >
-    &times;
-  </button>
-  @if (me) {
-    <div>
-      <img
-        [src]="me.avatar"
-        alt="profile.png"
-        fetchpriority="high"
-        loading="eager"
-        class="block rounded-lg"
-      />
-      <h1 class="mt-[10px] text-2xl font-semibold leading-[100%]">
-        {{ me.first_name }} {{ me.last_name }}
-      </h1>
-    </div>
-  }
-</dialog>
-@if (loader()) {
-  <div class="fixed z-11 bg-white/90 inset-0 content-center">
-    <div class="loader mx-auto"></div>
-  </div>
-}
 @let notif = notification();
 @if (notif) {
+  <router-outlet />
   <div
-    [class.show]="notif"
-    class="fixed top-[15px] inset-x-[15px] bg-white border-1 border-gray-200 rounded-xl p-[15px] z-10"
+    class="fixed z-10 inset-x-0 bottom-0 transition-transform duration-300 ease-in-out"
+    [class.translate-y-0]="show_menu()"
+    [class.translate-y-[100px]]="!show_menu()"
+  >
+    <menu class="flex items-stratch w-full h-[70px] bg-white border-t-1 border-gray-200">
+      <li
+        class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
+        routerLink="/plans"
+        routerLinkActive="text-gray-900 font-semibold"
+        [class.!text-gray-500]="profileModal.open"
+        [class.!font-normal]="profileModal.open"
+      >
+        <img
+          src="imgs/kalendar.png"
+          alt="kalendar.png"
+          fetchpriority="high"
+          loading="eager"
+          width="21"
+          height="21"
+        />
+        Планы
+      </li>
+      <li
+        class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
+        routerLink="/friends"
+        routerLinkActive="text-gray-900 font-semibold"
+        [class.!text-gray-500]="profileModal.open"
+        [class.!font-normal]="profileModal.open"
+      >
+        <img
+          src="imgs/friends.png"
+          alt="friends.png"
+          fetchpriority="high"
+          loading="eager"
+          width="24"
+          height="24"
+        />
+        Друзья
+      </li>
+      <li
+        routerLink="/start"
+        class="leading-1 w-[50px] h-[50px] mt-[-15px] cursor-pointer bg-[linear-gradient(135deg,#F093FB_0%,#F5576C_100%)] text-center content-center rounded-full text-white text-xl"
+      >
+        +
+      </li>
+      <li
+        class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
+        routerLink="/chats"
+        routerLinkActive="text-gray-900 font-semibold"
+        [class.!text-gray-500]="profileModal.open"
+        [class.!font-normal]="profileModal.open"
+      >
+        <img
+          src="imgs/bell.png"
+          alt="bell.png"
+          fetchpriority="high"
+          loading="eager"
+          width="21"
+          height="21"
+        />
+        Алерты
+      </li>
+      <li
+        (click)="profileModal.showModal()"
+        class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
+        [class.text-gray-900]="profileModal.open"
+        [class.font-semibold]="profileModal.open"
+      >
+        <img
+          src="imgs/profile.png"
+          alt="profile.png"
+          fetchpriority="high"
+          loading="eager"
+          width="21"
+          height="21"
+        />
+        Профиль
+      </li>
+    </menu>
+  </div>
+  @let me = profile$ | async;
+  <dialog
+    #profileModal
+    class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[320px] rounded-xl p-[15px]"
   >
     <button
-      (click)="notification.set(null)"
+      class="w-[25px] h-[25px] rounded-full bg-gray-100 text-gray-500 leading-1 cursor-pointer text-center content-center absolute top-[10px] right-[10px]"
       type="button"
-      class="w-[25px] h-[25px] rounded-full bg-gray-100 text-gray-500 leading-[100%] cursor-pointer text-center content-center absolute top-[10px] right-[10px]"
+      (click)="profileModal.close()"
     >
-      ×
+      &times;
     </button>
-    <div
-      class="block cursor-pointer"
-      (click)="
-        notification.set(null); readNotif(notif.id.toString(), notif.data.room_id.toString())
-      "
-    >
-      <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-base leading-[110%] block">{{
-        notif.title
-      }}</b>
-      <p [routerLink]="['/chats', notif.data.plan_id]" class="block mt-1 text-base text-gray-500">
-        {{ notif.message }}
-      </p>
+    @if (me) {
+      <div>
+        <img
+          [src]="me.avatar"
+          alt="profile.png"
+          fetchpriority="high"
+          loading="eager"
+          class="block rounded-lg"
+        />
+        <h1 class="mt-[10px] text-2xl font-semibold leading-[100%]">
+          {{ me.first_name }} {{ me.last_name }}
+        </h1>
+      </div>
+    }
+  </dialog>
+  @if (loader()) {
+    <div class="fixed z-11 bg-white/90 inset-0 content-center">
+      <div class="loader mx-auto"></div>
     </div>
-  </div>
+  }
+  <!-- @if (notif) {
+    <div
+      [class.show]="notif"
+      class="fixed top-[15px] inset-x-[15px] bg-white border-1 border-gray-200 rounded-xl p-[15px] z-10"
+    >
+      <button
+        (click)="notification.set(null)"
+        type="button"
+        class="w-[25px] h-[25px] rounded-full bg-gray-100 text-gray-500 leading-[100%] cursor-pointer text-center content-center absolute top-[10px] right-[10px]"
+      >
+        ×
+      </button>
+      <div
+        class="block cursor-pointer"
+        (click)="
+          notification.set(null); readNotif(notif.id.toString(), notif.data.room_id.toString())
+        "
+      >
+        <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-base leading-[110%] block">{{
+          notif.title
+        }}</b>
+        <p [routerLink]="['/chats', notif.data.plan_id]" class="block mt-1 text-base text-gray-500">
+          {{ notif.message }}
+        </p>
+      </div>
+    </div>
+  } -->
 }
