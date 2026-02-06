@@ -1,6 +1,6 @@
-<div class="p-[15px] space-y-[20px]">
+<div class="p-[15px] pt-[7rem] space-y-[20px]">
   <div>
-    <h5 class="text-sm font-bold leading-[100%] text-gray-900">Выбери эмодзи</h5>
+    <h5 class="text-base font-bold leading-[100%] text-gray-900">Выбери эмодзи</h5>
     <ul class="grid grid-cols-6 gap-[10px] mt-[5px]">
       @for (item of emojiMock; track item.id) {
         <li
@@ -23,7 +23,7 @@
   </div>
   <form [formGroup]="planForm" (ngSubmit)="updatePlan()" class="space-y-[20px]">
     <div>
-      <label class="text-sm font-bold leading-[100%] text-gray-900" for="titleInput"
+      <label class="text-base font-bold leading-[100%] text-gray-900" for="titleInput"
         >Название</label
       >
       <input
@@ -39,7 +39,7 @@
       />
     </div>
     <div>
-      <label class="text-sm font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
+      <label class="text-base font-bold leading-[100%] text-gray-900" for="kagda">Когда?</label>
       <input
         type="datetime-local"
         id="kagda"
@@ -53,7 +53,7 @@
       />
     </div>
     <div>
-      <label class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Где?</label>
+      <label class="text-base font-bold leading-[100%] text-gray-900" for="gde">Где?</label>
       <input
         type="text"
         id="gde"
@@ -69,7 +69,7 @@
     @let planUsers = getPlanUsers.value();
     @if (planUsers && planUsers.count_user > 0) {
       <div>
-        <b class="text-sm font-bold leading-[100%] text-gray-900" for="gde"
+        <b class="text-base font-bold leading-[100%] text-gray-900" for="gde"
           >Участники ({{ planUsers.count_user }})</b
         >
         <ul class="flex flex-wrap gap-[10px] mt-[5px]">
@@ -77,7 +77,7 @@
             @if (item.user.id !== planUsers.creator_id) {
               <li
                 (click)="removeFriend(item.user.id)"
-                class="bg-gray-200 rounded-full text-sm cursor-pointer select-none font-normal leading-[100%] text-gray-900 inline-flex items-center gap-x-[8px] w-auto px-[10px] h-[36px]"
+                class="bg-gray-200 rounded-full text-base cursor-pointer select-none font-normal leading-[100%] text-gray-900 inline-flex items-center gap-x-[8px] w-auto px-[10px] h-[36px]"
               >
                 <div
                   class="w-[20px] h-[20px] bg-red-400 rounded-full text-white content-center text-center"

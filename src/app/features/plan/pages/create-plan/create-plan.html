@@ -1,6 +1,6 @@
-<div class="p-[15px] space-y-[20px]">
+<div class="p-[15px] pt-[7rem] space-y-[20px]">
   <div>
-    <h5 class="text-sm font-bold leading-[100%] text-gray-900">Выбери эмодзи</h5>
+    <h5 class="text-base font-bold leading-[100%] text-gray-900">Выбери эмодзи</h5>
     <ul class="grid grid-cols-6 gap-[10px] mt-[5px]">
       @for (item of emojiMock; track item.id) {
         <li
@@ -24,7 +24,7 @@
   <form [formGroup]="planForm" (ngSubmit)="createPlan()" class="space-y-[20px]">
     <!-- Имя/Эмодзи -->
     <div>
-      <label for="titleInput" class="text-sm font-bold leading-[100%] text-gray-900">
+      <label for="titleInput" class="text-base font-bold leading-[100%] text-gray-900">
         Название
       </label>
       <input
@@ -44,7 +44,7 @@
 
     <!-- Дата и время -->
     <div>
-      <label for="kagda" class="text-sm font-bold leading-[100%] text-gray-900">Когда?</label>
+      <label for="kagda" class="text-base font-bold leading-[100%] text-gray-900">Когда?</label>
       <input
         type="datetime-local"
         id="kagda"
@@ -60,7 +60,7 @@
 
     <!-- Место -->
     <div>
-      <label for="gde" class="text-sm font-bold leading-[100%] text-gray-900">Где?</label>
+      <label for="gde" class="text-base font-bold leading-[100%] text-gray-900">Где?</label>
       <input
         type="text"
         id="gde"
@@ -78,7 +78,7 @@
     @let friends = getFriends.value();
     @if (friends && friends.length) {
       <div>
-        <b class="text-sm font-bold leading-[100%] text-gray-900" for="gde">Пригласить друзей</b>
+        <b class="text-base font-bold leading-[100%] text-gray-900" for="gde">Пригласить друзей</b>
         <ul class="flex flex-wrap gap-[10px] mt-[5px]">
           @for (item of friends; track item.user.id) {
             <li
@@ -87,7 +87,7 @@
                 selectedUserIds.has(item.user.id)
               "
               [class.text-white]="selectedUserIds.has(item.user.id)"
-              class="rounded-full text-sm cursor-pointer select-none font-normal leading-[100%] text-gray-900 inline-flex items-center gap-x-[8px] w-auto px-[15px] h-[36px] bg-gray-100"
+              class="rounded-full text-base cursor-pointer select-none font-normal leading-[100%] text-gray-900 inline-flex items-center gap-x-[8px] w-auto px-[15px] h-[36px] bg-gray-100"
             >
               <img
                 [src]="item.user.avatar"
