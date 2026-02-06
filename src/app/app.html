@@ -4,9 +4,9 @@
   [class.translate-y-0]="show_menu()"
   [class.translate-y-[100px]]="!show_menu()"
 >
-  <menu class="flex items-stratch w-full h-[65px] bg-white border-t-1 border-gray-200">
+  <menu class="flex items-stratch w-full h-[70px] bg-white border-t-1 border-gray-200">
     <li
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
+      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
       routerLink="/plans"
       routerLinkActive="text-gray-900 font-semibold"
       [class.!text-gray-500]="profileModal.open"
@@ -23,7 +23,7 @@
       Планы
     </li>
     <li
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
+      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
       routerLink="/friends"
       routerLinkActive="text-gray-900 font-semibold"
       [class.!text-gray-500]="profileModal.open"
@@ -46,7 +46,7 @@
       +
     </li>
     <li
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
+      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
       routerLink="/chats"
       routerLinkActive="text-gray-900 font-semibold"
       [class.!text-gray-500]="profileModal.open"
@@ -60,11 +60,11 @@
         width="21"
         height="21"
       />
-      Уведомления
+      Алерты
     </li>
     <li
       (click)="profileModal.showModal()"
-      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px] text-center text-gray-500 font-normal text-xs leading-[100%]"
+      class="flex-1 flex flex-col items-center cursor-pointer justify-center gap-y-[4px] py-[10px_20px] text-center text-gray-500 font-normal text-base leading-[100%]"
       [class.text-gray-900]="profileModal.open"
       [class.font-semibold]="profileModal.open"
     >
@@ -131,10 +131,10 @@
         notification.set(null); readNotif(notif.id.toString(), notif.data.room_id.toString())
       "
     >
-      <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-sm leading-[110%] block">{{
+      <b class="w-full max-w-[calc(100%-25px)] text-gray-700 text-base leading-[110%] block">{{
         notif.title
       }}</b>
-      <p [routerLink]="['/chats', notif.data.plan_id]" class="block mt-1 text-sm text-gray-500">
+      <p [routerLink]="['/chats', notif.data.plan_id]" class="block mt-1 text-base text-gray-500">
         {{ notif.message }}
       </p>
     </div>

@@ -56,6 +56,7 @@ export class App implements OnInit {
     });
   }
   async ngOnInit(): Promise<void> {
+    
     this.telegram.init('#fee140');
     let token: string | null = await this.telegram.getCloudStorage('access_token');
 

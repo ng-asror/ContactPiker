@@ -34,7 +34,7 @@ export class Telegram {
     this.tg.expand();
     this.tg.requestFullscreen();
     this.tg.disableVerticalSwipes();
-  this.tg.enableClosingConfirmation();
+    this.tg.enableClosingConfirmation();
   }
 
   get BackButton(): TgButton {
