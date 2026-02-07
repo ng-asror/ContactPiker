@@ -21,6 +21,6 @@ export const planRoutes: Routes = [
   // For chat
   {
     path: 'chats/:id/plan',
-    loadComponent: () => import('./pages').then((p) => p.UpdatePlan),
+    loadComponent: () => import('./pages').then((p) => p.PlanDetail),
   },
 ];
