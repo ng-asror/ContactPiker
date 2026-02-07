@@ -9,15 +9,22 @@ import {
   signal,
 } from '@angular/core';
 import { planEmojies } from './plan-emojies';
-import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Plan } from '../../services';
 import { Telegram } from '../../../../core';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { Router } from '@angular/router';
 import { Friends } from '../../../friends/services';
+import { Calendar } from '../../components';
 @Component({
   selector: 'app-create-plan',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Calendar],
   templateUrl: './create-plan.html',
   styleUrl: './create-plan.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,10 +61,15 @@ export class CreatePlan implements OnInit, OnDestroy {
     this.planForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(150)]],
       location: ['', [Validators.required, Validators.maxLength(150)]],
-      datetime: ['', [Validators.required]],
+      datetime: ['', [Validators.required, this.futureDateValidator]],
     });
   }
-
+  private futureDateValidator(control: AbstractControl) {
+    if (!control.value) return null;
+    const selected = new Date(control.value).getTime();
+    const now = Date.now();
+    return selected < now ? { pastDateTime: true } : null;
+  }
   // other functions
   protected setEmoji(emoji: string) {
     this.selectEmoji.set(emoji);
@@ -66,6 +78,7 @@ export class CreatePlan implements OnInit, OnDestroy {
   // create btn
   protected async createPlan(): Promise<void> {
     const getFormValue = this.planForm.getRawValue();
+    this.timeValidError();
     if (this.planForm.valid) {
       this.loader = true;
       await firstValueFrom(
@@ -80,6 +93,12 @@ export class CreatePlan implements OnInit, OnDestroy {
     } else {
       this.planForm.markAllAsTouched();
     }
+  }
+
+  timeValidError() {
+    const datetimeControl = this.planForm.get('datetime');
+    if (datetimeControl && !datetimeControl.valid)
+      this.telegram.showAlert('Выбранное время уже прошло');
   }
 
   formatLocalDate(): string {
