@@ -32,7 +32,7 @@
             {{ message.date | chatDate }}
           </p>
           <div class="w-full flex flex-col-reverse">
-            @for (item of message.messages.reverse(); track item.id) {
+            @for (item of message.messages; track item.id) {
               <div class="py-[7.5px]">
                 @defer (on viewport) {
                   <app-message
