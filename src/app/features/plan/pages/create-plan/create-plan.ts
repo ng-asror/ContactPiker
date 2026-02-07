@@ -21,10 +21,9 @@ import { Telegram } from '../../../../core';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { Router } from '@angular/router';
 import { Friends } from '../../../friends/services';
-import { Calendar } from '../../components';
 @Component({
   selector: 'app-create-plan',
-  imports: [ReactiveFormsModule, Calendar],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-plan.html',
   styleUrl: './create-plan.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
