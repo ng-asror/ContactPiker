@@ -37,7 +37,7 @@ export class App implements OnInit {
   private notifService = inject(Notification);
 
   // SIGNALS
-  loader = signal<boolean>(true);
+  // loader = signal<boolean>(true);
   notification = signal<INotification | null>(null);
   show_menu = signal<boolean>(true);
 
@@ -61,7 +61,7 @@ export class App implements OnInit {
 
     // start params
     const startParams = (await this.telegram.getTgUser()).start_param;
-    if (!startParams) this.loader.set(false);
+    // if (!startParams) this.loader.set(false);
     if (!token) {
       await this.login(startParams);
       token = await this.telegram.getCloudStorage('access_token');
@@ -125,9 +125,8 @@ export class App implements OnInit {
 
   async getPlan(invite_token: string): Promise<void> {
     await firstValueFrom(this.planService.getPlanForToken(invite_token)).then((res) => {
-      this.router
-        .navigateByUrl(`plans/${res.plan.id}`)
-        .finally(() => setTimeout(() => this.loader.set(false), 500));
+      this.router.navigateByUrl(`plans/${res.plan.id}`);
+      // .finally(() => setTimeout(() => this.loader.set(false), 500));
     });
   }
 
