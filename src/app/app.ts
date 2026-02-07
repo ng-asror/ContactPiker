@@ -14,7 +14,7 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
-import { filter, firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, withLatestFrom } from 'rxjs';
 import { Account, INotification, Socket, Telegram } from './core';
 import { Notification } from './features/notification';
 import { AsyncPipe } from '@angular/common';
@@ -78,26 +78,32 @@ export class App implements OnInit {
   }
 
   private notificationInit(): void {
-    let room_id: number | null = null;
-    this.socketService.chatId$.subscribe((res) => (room_id = res));
-    this.socketService.listenNotification().subscribe({
-      next: (res) => {
-        if (res.data.room_id === room_id) return;
-        this.notification.set(res);
+    this.socketService
+      .listenNotification()
+      .pipe(withLatestFrom(this.socketService.chatId$))
+      .subscribe({
+        next: ([res, roomId]) => {
+          if (res.data.room_id !== roomId) {
+            console.log(res.data.room_id, roomId);
 
-        this.audio.volume = 1;
-        this.audio.play().catch((err) => console.warn('Audio playback blocked:', err));
+            this.notification.set(res);
 
-        if (this.notificationTimeout) {
-          clearTimeout(this.notificationTimeout);
-        }
+            this.audio.volume = 1;
+            this.audio.play().catch((err) => console.warn('Audio playback blocked:', err));
 
-        this.notificationTimeout = setTimeout(() => {
-          this.notification.set(null);
-          this.notificationTimeout = null;
-        }, 3000);
-      },
-    });
+            if (this.notificationTimeout) {
+              clearTimeout(this.notificationTimeout);
+            }
+
+            this.notificationTimeout = setTimeout(() => {
+              this.notification.set(null);
+              this.notificationTimeout = null;
+            }, 3000);
+          } else {
+            this.notification.set(null);
+          }
+        },
+      });
   }
 
   private async login(startParams: string | null): Promise<void> {
