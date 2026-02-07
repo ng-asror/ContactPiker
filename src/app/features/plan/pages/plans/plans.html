@@ -1,185 +1,234 @@
 @let plansValue = plans.value();
 <div class="p-[25px] py-[7rem_70px]">
-	<div class="flex items-center justify-between">
-		<h1 class="text-2xl font-bold text-gray-900 capitalize">
-			{{ currentMonth }} {{ currentYear }}
-		</h1>
-		<button (click)="selectDay.set(currentDay); selectDayPlans = todayPlan"
-			class="cursor-pointer bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[36px] w-fit px-[20px] text-[13px] font-bold leading-[100%] text-white">
-			Сегодня
-		</button>
-	</div>
-	<div class="my-[30px]">
-		<ul class="grid grid-cols-7 gap-x-[10px]">
-			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Пн</li>
-			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Вт</li>
-			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Ср</li>
-			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Чт</li>
-			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Пт</li>
-			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Сб</li>
-			<li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Вс</li>
-		</ul>
-		<ul class="grid grid-cols-7 gap-[10px] mt-[20px]">
-			@if(!plans.isLoading() && plansValue) {
-			@for (day of plansValue.monthPlans; let i = $index; track i) {
-			<li (click)="selectDay.set(i + 1); selectDayPlans = day.plans"
-				class="bg-gray-100 cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%]"
-				[class.bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)]]="selectDay() === i + 1"
-				[class.text-white]="selectDay() === i + 1">
-				{{day.day}}
-				@if(day.plans.length) {
-				<span class="translate-y-[4px] w-[6px] h-[6px] bg-[#F5576C] block mx-auto rounded-full"></span>
-				}
-			</li>
-			}
-			}@else {
-			@for(day of days; track day) {
-			<li
-				class="bg-gray-100 animate-pulse cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%]">
-			</li>
-			}
-			}
-		</ul>
-	</div>
-	@if(selectDayPlans.length) {
-	<div class="space-y-[12px]  mb-[25px]">
-		@for(item of selectDayPlans; track item.id) {
-		<a [routerLink]="item.id.toString()"
-			class="flex mt-[5px] items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]">
-			<p class="text-2xl leading-[100%]">{{item.emoji}}</p>
-			<div>
-				<b class="text-base font-bold text-gray-900 leading-[120%]">{{item.name}}</b>
-				<div class="mt-[10px]">
-					<p class="text-sm text-gray-400 leading-[100%] text-gray-500">{{item.datetime | day}} • {{item.location}}
-					</p>
-					@if(item.count_user !== 0) {
-					<div class="-space-x-2 mt-[5px]">
-						@for(item of item.plan_users.slice(0, 3); track item.id) {
-						<img [src]="item.user.avatar"
-							class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
-						}
-							@if(item.count_user > 3) {
-						<div
-							class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-3 text-gray-500 text-sm font-bold">
-							+{{item.count_user - 3}}</div>
-						}
-					</div>
-					}
-				</div>
-			</div>
-		</a>
-		}
-	</div>
-	} @else {
-	<div class="rounded-xl border-1 border-gray-100 mb-5 p-[15px] bg-white">
-		<div class="-space-y-19 flex flex-col items-center w-3/4 mx-auto mb-2">
-			<div class="rounded-xl border-1 border-gray-100 h-auto p-[10px] bg-white w-full shadow-xs shadow-gray-100 relative z-3">
-				<div class="flex items-start gap-x-[7px] w-full">
-					<div class="rounded-full bg-gray-200 w-[30px] shrink-[0] h-[30px]"></div>
-					<div class="w-full mt-1">
-						<div class="w-full h-[15px] bg-gray-200 rounded-full"></div>
-						<div class="w-full h-[10px] bg-gray-200 rounded-full my-[7px_3px]"></div>
-						<div class="-space-x-2 flex">
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="rounded-xl border-1 border-gray-100 h-auto p-[10px] bg-white w-full shadow-xs shadow-gray-100 relative z-2 max-w-[calc(100%-15px)]">
-				<div class="flex items-start gap-x-[7px] w-full">
-					<div class="rounded-full bg-gray-200 w-[30px] shrink-[0] h-[30px]"></div>
-					<div class="w-full mt-1">
-						<div class="w-full h-[15px] bg-gray-200 rounded-full"></div>
-						<div class="w-full h-[10px] bg-gray-200 rounded-full my-[7px_3px]"></div>
-						<div class="-space-x-2 flex">
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="rounded-xl border-1 border-gray-100 h-auto p-[10px] bg-white w-full shadow-xs shadow-gray-100 relative z-1 max-w-[calc(100%-35px)]">
-				<div class="flex items-start gap-x-[7px] w-full">
-					<div class="rounded-full bg-gray-200 w-[30px] shrink-[0] h-[30px]"></div>
-					<div class="w-full mt-1">
-						<div class="w-full h-[15px] bg-gray-200 rounded-full"></div>
-						<div class="w-full h-[10px] bg-gray-200 rounded-full my-[7px_3px]"></div>
-						<div class="-space-x-2 flex">
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-							<div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<p class="text-sm leading-[120%] text-center text-gray-400">Нажми +, чтобы создать план и пригласить друзей</p>
-	</div>
-	}
-	@if (plansValue && (plansValue.nearPlans.tomorrow.length || plansValue.nearPlans.dayAfterTomorrow.length)) {
-	@let tomorrow = plansValue.nearPlans.tomorrow;
-	@let dayAfterTomorrow = plansValue.nearPlans.dayAfterTomorrow;
-	<b class="text-gray-900 text-lg font-bold leading-[100%]">Ближайшие планы</b>
-	<div class="space-y-[12px] mt-[10px]">
-		@for (plan of tomorrow; track plan.id) {
-		<a [routerLink]="plan.id.toString()"
-			class="flex items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]">
-			<p class="text-2xl leading-[100%]">{{plan.emoji}}</p>
-			<div>
-				<b class="text-base font-bold text-gray-900 leading-[120%]">{{plan.name}}</b>
-				<div class="mt-[10px]">
-					<p class="text-sm text-gray-400 leading-[100%] text-gray-500">{{plan.datetime | day}}</p>
-					@if(plan.count_user) {
-					<div class="-space-x-2 mt-[5px]">
-						@for(item of plan.plan_users.slice(0, 3); track item.id) {
-						@if(item.user.avatar) {
-						<img [src]="item.user.avatar" alt="user.png" fetchpriority="low" loading="lazy" width="40" height="40"
-							class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
-						}
-						}
-						@if(plan.count_user > 3) {
-						<div
-							class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-3 text-gray-500 text-sm font-bold">
-							+{{plan.count_user - 3}}</div>
-						}
-					</div>
-					}
-				</div>
-			</div>
-		</a>
-		}
-		@for (plan of dayAfterTomorrow; track plan.id) {
-		<a [routerLink]="plan.id.toString()"
-			class="flex items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]">
-			<p class="text-2xl leading-[100%]">{{plan.emoji}}</p>
-			<div>
-				<b class="text-base font-bold text-gray-900 leading-[120%]">{{plan.name}}</b>
-				<div class="mt-[10px]">
-					<p class="text-sm text-gray-400 leading-[100%] text-gray-500">{{plan.datetime | day}}</p>
-					@if(plan.count_user) {
-					<div class="-space-x-2 mt-[5px]">
-						@for(item of plan.plan_users.slice(0, 3); track item.id) {
-						@if(item.user.avatar) {
-						<img [src]="item.user.avatar" alt="user.png" fetchpriority="low" loading="lazy" width="40" height="40"
-							class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white">
-						}
-						}
-						@if(plan.count_user > 3) {
-						<div
-							class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-3 text-gray-500 text-sm font-bold">
-							+{{plan.count_user - 3}}</div>
-						}
-					</div>
-					}
-				</div>
-			</div>
-		</a>
-		}
-	</div>
-	}
-	<div>
-	</div>
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-900 capitalize">
+      {{ currentMonth }} {{ currentYear }}
+    </h1>
+    <button
+      (click)="selectDay.set(currentDay); selectDayPlans = todayPlan"
+      class="cursor-pointer bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)] rounded-full h-[36px] w-fit px-[20px] text-[13px] font-bold leading-[100%] text-white"
+    >
+      Сегодня
+    </button>
+  </div>
+  <div class="my-[30px]">
+    <ul class="grid grid-cols-7 gap-x-[10px]">
+      <li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Пн</li>
+      <li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Вт</li>
+      <li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Ср</li>
+      <li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Чт</li>
+      <li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Пт</li>
+      <li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Сб</li>
+      <li class="text-center text-xs font-bold text-gray-400 leading-[100%]">Вс</li>
+    </ul>
+    <ul class="grid grid-cols-7 gap-[10px] mt-[20px]">
+      @if (!plans.isLoading() && plansValue) {
+        @for (day of plansValue.monthPlans; let i = $index; track i) {
+          <li
+            (click)="selectDay.set(i + 1); selectDayPlans = day.plans"
+            class="bg-gray-100 cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%]"
+            [class.bg-[linear-gradient(110deg,#FA709A_0%,#FEE140_100%)]]="selectDay() === i + 1"
+            [class.text-white]="selectDay() === i + 1"
+          >
+            {{ day.day }}
+            @if (day.plans.length) {
+              <span
+                class="translate-y-[4px] w-[6px] h-[6px] bg-[#F5576C] block mx-auto rounded-full"
+              ></span>
+            }
+          </li>
+        }
+      } @else {
+        @for (day of days; track day) {
+          <li
+            class="bg-gray-100 animate-pulse cursor-pointer aspect-square select-none rounded-xl content-center text-center text-base font-semibold leading-[100%]"
+          ></li>
+        }
+      }
+    </ul>
+  </div>
+  @if (selectDayPlans.length) {
+    <div class="space-y-[12px] mb-[25px]">
+      @for (item of selectDayPlans; track item.id) {
+        <a
+          [routerLink]="item.id.toString()"
+          class="flex mt-[5px] items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]"
+        >
+          <p class="text-2xl leading-[100%]">{{ item.emoji }}</p>
+          <div>
+            <b class="text-base font-bold text-gray-900 leading-[120%]">{{ item.name }}</b>
+            <div class="mt-[10px]">
+              <p class="text-sm text-gray-400 leading-[100%] text-gray-500">
+                {{ item.datetime | day }} • {{ item.location }}
+              </p>
+              @if (item.count_user !== 0) {
+                <div class="-space-x-2 mt-[5px]">
+                  @for (item of item.plan_users.slice(0, 3); track item.id) {
+                    <img
+                      [src]="item.user.avatar"
+                      class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white"
+                    />
+                  }
+                  @if (item.count_user > 3) {
+                    <div
+                      class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-3 text-gray-500 text-sm font-bold"
+                    >
+                      +{{ item.count_user - 3 }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  } @else {
+    <div class="rounded-xl border-1 border-gray-100 mb-5 p-[15px] bg-white">
+      <div class="-space-y-19 flex flex-col items-center w-3/4 mx-auto mb-2">
+        <div
+          class="rounded-xl border-1 border-gray-100 h-auto p-[10px] bg-white w-full shadow-xs shadow-gray-100 relative z-3"
+        >
+          <div class="flex items-start gap-x-[7px] w-full">
+            <div class="rounded-full bg-gray-200 w-[30px] shrink-[0] h-[30px]"></div>
+            <div class="w-full mt-1">
+              <div class="w-full h-[15px] bg-gray-200 rounded-full"></div>
+              <div class="w-full h-[10px] bg-gray-200 rounded-full my-[7px_3px]"></div>
+              <div class="-space-x-2 flex">
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="rounded-xl border-1 border-gray-100 h-auto p-[10px] bg-white w-full shadow-xs shadow-gray-100 relative z-2 max-w-[calc(100%-15px)]"
+        >
+          <div class="flex items-start gap-x-[7px] w-full">
+            <div class="rounded-full bg-gray-200 w-[30px] shrink-[0] h-[30px]"></div>
+            <div class="w-full mt-1">
+              <div class="w-full h-[15px] bg-gray-200 rounded-full"></div>
+              <div class="w-full h-[10px] bg-gray-200 rounded-full my-[7px_3px]"></div>
+              <div class="-space-x-2 flex">
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="rounded-xl border-1 border-gray-100 h-auto p-[10px] bg-white w-full shadow-xs shadow-gray-100 relative z-1 max-w-[calc(100%-35px)]"
+        >
+          <div class="flex items-start gap-x-[7px] w-full">
+            <div class="rounded-full bg-gray-200 w-[30px] shrink-[0] h-[30px]"></div>
+            <div class="w-full mt-1">
+              <div class="w-full h-[15px] bg-gray-200 rounded-full"></div>
+              <div class="w-full h-[10px] bg-gray-200 rounded-full my-[7px_3px]"></div>
+              <div class="-space-x-2 flex">
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+                <div class="w-[20px] h-[20px] bg-gray-200 rounded-xl border-1 border-white"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="text-base leading-[120%] text-center text-gray-400">
+        Нажми +, чтобы создать план и пригласить друзей
+      </p>
+    </div>
+  }
+  @if (
+    plansValue &&
+    (plansValue.nearPlans.tomorrow.length || plansValue.nearPlans.dayAfterTomorrow.length)
+  ) {
+    @let tomorrow = plansValue.nearPlans.tomorrow;
+    @let dayAfterTomorrow = plansValue.nearPlans.dayAfterTomorrow;
+    <b class="text-gray-900 text-lg font-bold leading-[100%]">Ближайшие планы</b>
+    <div class="space-y-[12px] mt-[10px]">
+      @for (plan of tomorrow; track plan.id) {
+        <a
+          [routerLink]="plan.id.toString()"
+          class="flex items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]"
+        >
+          <p class="text-2xl leading-[100%]">{{ plan.emoji }}</p>
+          <div>
+            <b class="text-base font-bold text-gray-900 leading-[120%]">{{ plan.name }}</b>
+            <div class="mt-[10px]">
+              <p class="text-sm text-gray-400 leading-[100%] text-gray-500">
+                {{ plan.datetime | day }}
+              </p>
+              @if (plan.count_user) {
+                <div class="-space-x-2 mt-[5px]">
+                  @for (item of plan.plan_users.slice(0, 3); track item.id) {
+                    @if (item.user.avatar) {
+                      <img
+                        [src]="item.user.avatar"
+                        alt="user.png"
+                        fetchpriority="low"
+                        loading="lazy"
+                        width="40"
+                        height="40"
+                        class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white"
+                      />
+                    }
+                  }
+                  @if (plan.count_user > 3) {
+                    <div
+                      class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-3 text-gray-500 text-sm font-bold"
+                    >
+                      +{{ plan.count_user - 3 }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </a>
+      }
+      @for (plan of dayAfterTomorrow; track plan.id) {
+        <a
+          [routerLink]="plan.id.toString()"
+          class="flex items-start gap-x-[10px] p-[15px] rounded-2xl bg-[linear-gradient(106deg,rgba(250,112,154,0.13)_0%,rgba(254,225,64,0.13)_100%)]"
+        >
+          <p class="text-2xl leading-[100%]">{{ plan.emoji }}</p>
+          <div>
+            <b class="text-base font-bold text-gray-900 leading-[120%]">{{ plan.name }}</b>
+            <div class="mt-[10px]">
+              <p class="text-sm text-gray-400 leading-[100%] text-gray-500">
+                {{ plan.datetime | day }}
+              </p>
+              @if (plan.count_user) {
+                <div class="-space-x-2 mt-[5px]">
+                  @for (item of plan.plan_users.slice(0, 3); track item.id) {
+                    @if (item.user.avatar) {
+                      <img
+                        [src]="item.user.avatar"
+                        alt="user.png"
+                        fetchpriority="low"
+                        loading="lazy"
+                        width="40"
+                        height="40"
+                        class="inline-block h-[25px] w-[25px] rounded-full ring-2 content-center text-center text-white text-xs font-bold bg-[linear-gradient(135deg,#FF6B6B_0%,#FFA502_100%)] ring-white"
+                      />
+                    }
+                  }
+                  @if (plan.count_user > 3) {
+                    <div
+                      class="inline-block h-[25px] w-[25px] rounded-full content-center text-center ml-3 text-gray-500 text-sm font-bold"
+                    >
+                      +{{ plan.count_user - 3 }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+  <div></div>
 </div>
