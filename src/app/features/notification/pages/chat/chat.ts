@@ -43,7 +43,6 @@ export class Chat implements OnInit, OnDestroy {
     loader: () => firstValueFrom(this.notificationService.room(this.room_id())),
   });
 
-
   messagesResource = resource({
     loader: () =>
       firstValueFrom(this.notificationService.messages(this.room_id())).then((res) => {
@@ -63,7 +62,7 @@ export class Chat implements OnInit, OnDestroy {
         return (
           Array.from(map.entries()).map(([date, messages]) => ({
             date,
-            messages,
+            messages: messages.reverse(),
           })) ?? null
         );
       }),
@@ -97,11 +96,14 @@ export class Chat implements OnInit, OnDestroy {
     const token = await this.telegramService.getCloudStorage('access_token');
     this.socketService.initSocket(token, `chat/${this.room_id()}`);
 
+    this.socketService.chatIdSubject.next(Number(this.room_id()));
+
     // socket
     this.listenMessages();
   }
 
   ngOnDestroy(): void {
+    this.socketService.chatIdSubject.next(null);
     this.telegramService.hiddeBackButton('/chats');
   }
 
