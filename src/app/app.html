@@ -106,14 +106,15 @@
       <h1 class="mt-[10px] text-2xl font-semibold leading-[100%]">
         {{ me.first_name }} {{ me.last_name }}
       </h1>
+      <a routerLink="/privacy-policy" (click)="profileModal.close()" class="text-base leading-[100%] block mt-2 text-blue-500">Политика конфиденциальности</a>
     </div>
   }
 </dialog>
-<!-- @if (loader()) {
-<div class="fixed z-11 bg-white inset-0 content-center">
-	<div class="loader mx-auto"></div>
-</div>
-} -->
+@if (loader()) {
+  <div class="fixed z-11 bg-white inset-0 content-center">
+    <div class="loader mx-auto"></div>
+  </div>
+}
 @if (notif) {
   <div
     [class.show]="notif"
