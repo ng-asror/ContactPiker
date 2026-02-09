@@ -6,18 +6,23 @@ import { profileRoutes } from './features/profile';
 import { notificationRoutes } from './features/notification';
 
 export const routes: Routes = [
-	{
-		path: 'start',
-		component: Start,
-		data: { menu: true },
-	},
-	...planRoutes,
-	...friendsRoutes,
-	...profileRoutes,
-	...notificationRoutes,
-	{
-		path: '',
-		redirectTo: 'start',
-		pathMatch: 'full',
-	},
+  {
+    path: 'start',
+    component: Start,
+    data: { menu: true },
+  },
+  {
+    path: 'privacy-policy',
+    loadComponent: () => import('./features').then((p) => p.PrivacyPolicy),
+    data: { menu: true },
+  },
+  ...planRoutes,
+  ...friendsRoutes,
+  ...profileRoutes,
+  ...notificationRoutes,
+  {
+    path: '',
+    redirectTo: 'start',
+    pathMatch: 'full',
+  },
 ];
