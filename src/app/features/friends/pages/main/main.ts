@@ -3,10 +3,11 @@ import { Friends } from '../../services';
 import { firstValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { IFriend } from '../../interface';
+import { PlanRusPipe } from '../../pipes';
 
 @Component({
   selector: 'app-main',
-  imports: [RouterLink],
+  imports: [RouterLink, PlanRusPipe],
 
   templateUrl: './main.html',
   styleUrl: './main.css',
