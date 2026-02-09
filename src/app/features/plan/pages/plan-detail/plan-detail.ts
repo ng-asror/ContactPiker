@@ -127,7 +127,6 @@ export class PlanDetail implements OnInit, OnDestroy {
       title: 'Предупреждение',
       message: 'Данная invite-ссылка действительна только для одного пользователя...',
       buttons: [
-        { id: 'copy', type: 'default', text: 'Скопировать' },
         { id: 'share', type: 'default', text: 'Поделиться' },
       ],
     };
@@ -142,10 +141,6 @@ export class PlanDetail implements OnInit, OnDestroy {
 
     this.telegram.tg.showPopup(popupData, (buttonId: string) => {
       switch (buttonId) {
-        case 'copy':
-          this.clipboard.copy(invite.link);
-          break;
-
         case 'share': {
           const fullUrl = `https://t.me/share/url?url=${invite.msg}`;
           this.telegram.open(fullUrl);
