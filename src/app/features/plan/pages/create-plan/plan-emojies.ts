@@ -59,8 +59,8 @@ export const planEmojies: {
 			id: 11,
 		},
 		{
-			emoji: '🍻',
-			emoji_img: 'piva.png',
+			emoji: '💅',
+			emoji_img: 'noil.png',
 			id: 12,
 		},
 	];
