@@ -1,16 +1,16 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  effect,
-  ElementRef,
-  inject,
-  input,
-  OnDestroy,
-  OnInit,
-  resource,
-  signal,
-  ViewChild,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	effect,
+	ElementRef,
+	inject,
+	input,
+	OnDestroy,
+	OnInit,
+	resource,
+	signal,
+	ViewChild,
 } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Account, IPopup, Telegram } from '../../../../core';
@@ -23,182 +23,182 @@ import { IPlanUser } from '../../interfaces';
 import { Friends, IFriend } from '../../../friends';
 
 @Component({
-  selector: 'app-plan-detail',
-  imports: [RouterLink, DaysPipe, DatePipe],
-  templateUrl: './plan-detail.html',
-  styleUrl: './plan-detail.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+	selector: 'app-plan-detail',
+	imports: [RouterLink, DaysPipe, DatePipe],
+	templateUrl: './plan-detail.html',
+	styleUrl: './plan-detail.css',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlanDetail implements OnInit, OnDestroy {
-  private telegram = inject(Telegram);
-  private clipboard = inject(Clipboard);
-  private planService = inject(PlanService);
-  private accountService = inject(Account);
-  private friendsService = inject(Friends);
-  private cd = inject(ChangeDetectorRef);
+	private telegram = inject(Telegram);
+	private clipboard = inject(Clipboard);
+	private planService = inject(PlanService);
+	private accountService = inject(Account);
+	private friendsService = inject(Friends);
+	private cd = inject(ChangeDetectorRef);
 
-  // Variables
-  protected pending = signal<boolean>(true);
-  protected addFriendLoading = signal<boolean>(false);
+	// Variables
+	protected pending = signal<boolean>(true);
+	protected addFriendLoading = signal<boolean>(false);
 
-  // inputs
-  id = input<string>('id');
+	// inputs
+	id = input<string>('id');
 
-  // Signals
-  selectedFriendsId = new Set<number>();
-  friends: IFriend[] = [];
+	// Signals
+	selectedFriendsId = new Set<number>();
+	friends: IFriend[] = [];
 
-  // ViewChilds
-  @ViewChild('shareModal') shareModal!: ElementRef<HTMLDialogElement>;
+	// ViewChilds
+	@ViewChild('shareModal') shareModal!: ElementRef<HTMLDialogElement>;
 
-  // resources
-  plan = resource({
-    loader: () => firstValueFrom(this.planService.getPlan(this.id())),
-  });
+	// resources
+	plan = resource({
+		loader: () => firstValueFrom(this.planService.getPlan(this.id())),
+	});
 
-  profile = resource({
-    loader: () => firstValueFrom(this.accountService.profile()),
-  });
+	profile = resource({
+		loader: () => firstValueFrom(this.accountService.profile()),
+	});
 
-  // Effects
-  effects = effect(() => {
-    const plan = this.plan.value();
-    const profile = this.profile.value();
+	// Effects
+	effects = effect(() => {
+		const plan = this.plan.value();
+		const profile = this.profile.value();
 
-    if (!plan || !profile) return;
+		if (!plan || !profile) return;
 
-    const user = plan.plan_users.find((u) => u.user.id === profile.id);
+		const user = plan.plan_users.find((u) => u.user.id === profile.id);
 
-    this.pending.set(
-      user ? ['Ожидает ответа', 'Удален из группы чата'].includes(user.status) : true,
-    );
-  });
+		this.pending.set(
+			user ? ['Ожидает ответа', 'Удален из группы чата'].includes(user.status) : true,
+		);
+	});
 
-  ngOnInit(): void {
-    this.telegram.showBackButton('/plans');
-  }
+	ngOnInit(): void {
+		this.telegram.showBackButton('/plans');
+	}
 
-  protected approve(): void {
-    try {
-      firstValueFrom(this.planService.approvePlan(this.id())).then((res: IPlanUser) => {
-        this.pending.set(false);
-        this.plan.update((plan) => {
-          if (!plan) return plan;
+	protected approve(): void {
+		try {
+			firstValueFrom(this.planService.approvePlan(this.id())).then((res: IPlanUser) => {
+				this.pending.set(false);
+				this.plan.update((plan) => {
+					if (!plan) return plan;
 
-          const exists = plan.plan_users.some((pu) => pu.id === res.id);
+					const exists = plan.plan_users.some((pu) => pu.id === res.id);
 
-          const plan_users = exists
-            ? plan.plan_users.map((pu) => (pu.id === res.id ? { ...pu, ...res } : pu))
-            : [...plan.plan_users, res];
+					const plan_users = exists
+						? plan.plan_users.map((pu) => (pu.id === res.id ? { ...pu, ...res } : pu))
+						: [...plan.plan_users, res];
 
-          return { ...plan, plan_users };
-        });
-      });
-    } catch (error) {
-      this.telegram.showAlert('Произошла ошибка. Попробуйте позже.');
-    }
-  }
+					return { ...plan, plan_users };
+				});
+			});
+		} catch (error) {
+			this.telegram.showAlert('Произошла ошибка. Попробуйте позже.');
+		}
+	}
 
-  protected reject(): void {
-    try {
-      firstValueFrom(this.planService.rejectPlan(this.id())).then((res: IPlanUser) => {
-        this.pending.set(false);
-        this.plan.update((plan) => {
-          if (!plan) return plan;
+	protected reject(): void {
+		try {
+			firstValueFrom(this.planService.rejectPlan(this.id())).then((res: IPlanUser) => {
+				this.pending.set(false);
+				this.plan.update((plan) => {
+					if (!plan) return plan;
 
-          const updatedPlanUsers = plan.plan_users.map((pu) =>
-            pu.id === res.id ? { ...pu, ...res } : pu,
-          );
+					const updatedPlanUsers = plan.plan_users.map((pu) =>
+						pu.id === res.id ? { ...pu, ...res } : pu,
+					);
 
-          return { ...plan, plan_users: updatedPlanUsers };
-        });
-      });
-    } catch (error) {
-      this.telegram.showAlert('Произошла ошибка. Попробуйте позже.');
-    }
-  }
+					return { ...plan, plan_users: updatedPlanUsers };
+				});
+			});
+		} catch (error) {
+			this.telegram.showAlert('Произошла ошибка. Попробуйте позже.');
+		}
+	}
 
-  async sharePlan(): Promise<void> {
-    await this.getFriends();
+	async sharePlan(): Promise<void> {
+		await this.getFriends();
 
-    const invite = await firstValueFrom(this.planService.sharePlan(this.id()));
+		const invite = await firstValueFrom(this.planService.sharePlan(this.id()));
 
-    const popupData: IPopup = {
-      title: 'Предупреждение',
-      message: 'Данная invite-ссылка действительна только для одного пользователя...',
-      buttons: [
-        { id: 'share', type: 'default', text: 'Поделиться' },
-      ],
-    };
+		const popupData: IPopup = {
+			title: 'Одно  приглашение — для одного друга.',
+			message: 'Приглашайте друзей по одному без ограничений. После принятия приглашения вы сможете добавлять их прямо из приложения.',
+			buttons: [
+				{ id: 'share', type: 'default', text: 'Поделиться' },
+			],
+		};
 
-    if (this.friends.length) {
-      popupData.buttons.unshift({
-        id: 'friends',
-        type: 'default',
-        text: 'Друзья',
-      });
-    }
+		if (this.friends.length) {
+			popupData.buttons.unshift({
+				id: 'friends',
+				type: 'default',
+				text: 'Друзья',
+			});
+		}
 
-    this.telegram.tg.showPopup(popupData, (buttonId: string) => {
-      switch (buttonId) {
-        case 'share': {
-          const fullUrl = `https://t.me/share/url?url=${invite.msg}`;
-          this.telegram.open(fullUrl);
-          break;
-        }
+		this.telegram.tg.showPopup(popupData, (buttonId: string) => {
+			switch (buttonId) {
+				case 'share': {
+					const fullUrl = `https://t.me/share/url?url=${invite.msg}`;
+					this.telegram.open(fullUrl);
+					break;
+				}
 
-        case 'friends':
-          this.selectedFriendsId.clear();
-          this.cd.detectChanges();
-          this.shareModal.nativeElement.showModal();
-          break;
-      }
-    });
-  }
+				case 'friends':
+					this.selectedFriendsId.clear();
+					this.cd.detectChanges();
+					this.shareModal.nativeElement.showModal();
+					break;
+			}
+		});
+	}
 
-  private async getFriends(): Promise<void> {
-    const getPlan = this.plan.value();
-    const res = await firstValueFrom(this.friendsService.getFriends());
+	private async getFriends(): Promise<void> {
+		const getPlan = this.plan.value();
+		const res = await firstValueFrom(this.friendsService.getFriends());
 
-    if (!getPlan) {
-      this.friends = res.friends;
-      return;
-    }
+		if (!getPlan) {
+			this.friends = res.friends;
+			return;
+		}
 
-    const planUsers = getPlan.plan_users ?? [];
+		const planUsers = getPlan.plan_users ?? [];
 
-    const allowedFromPlanIds = new Set(
-      planUsers
-        .filter((pu) => ['Отклонено', 'Удален из группы чата'].includes(pu.status))
-        .map((pu) => pu.user.id),
-    );
+		const allowedFromPlanIds = new Set(
+			planUsers
+				.filter((pu) => ['Отклонено', 'Удален из группы чата'].includes(pu.status))
+				.map((pu) => pu.user.id),
+		);
 
-    this.friends = res.friends.filter((friend) => {
-      const inPlan = planUsers.some((pu) => pu.user.id === friend.user.id);
+		this.friends = res.friends.filter((friend) => {
+			const inPlan = planUsers.some((pu) => pu.user.id === friend.user.id);
 
-      if (!inPlan) return true;
+			if (!inPlan) return true;
 
-      return allowedFromPlanIds.has(friend.user.id);
-    });
-  }
+			return allowedFromPlanIds.has(friend.user.id);
+		});
+	}
 
-  protected toggleFriends(id: number): void {
-    this.selectedFriendsId.has(id)
-      ? this.selectedFriendsId.delete(id)
-      : this.selectedFriendsId.add(id);
-  }
+	protected toggleFriends(id: number): void {
+		this.selectedFriendsId.has(id)
+			? this.selectedFriendsId.delete(id)
+			: this.selectedFriendsId.add(id);
+	}
 
-  // addFriends
-  async addFriends(): Promise<void> {
-    this.addFriendLoading.set(true);
-    await firstValueFrom(
-      this.planService.sendFriends(this.id(), Array.from(this.selectedFriendsId)),
-    ).finally(() => {
-      this.plan.reload();
-    });
-  }
+	// addFriends
+	async addFriends(): Promise<void> {
+		this.addFriendLoading.set(true);
+		await firstValueFrom(
+			this.planService.sendFriends(this.id(), Array.from(this.selectedFriendsId)),
+		).finally(() => {
+			this.plan.reload();
+		});
+	}
 
-  ngOnDestroy(): void {
-    this.telegram.hiddeBackButton('/plans');
-  }
+	ngOnDestroy(): void {
+		this.telegram.hiddeBackButton('/plans');
+	}
 }
